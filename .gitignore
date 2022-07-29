@@ -1,3 +1,5 @@
+dist
+
 # Logs
 logs
 *.log
@@ -74,6 +76,7 @@ typings/
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
+.parcel-cache
 
 # Next.js build output
 .next
@@ -101,5 +104,3 @@ typings/
 
 # TernJS port file
 .tern-port
-
-.parcel-cache

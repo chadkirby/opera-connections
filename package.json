@@ -11,7 +11,7 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build --target pages"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.31.0",
@@ -31,6 +31,15 @@
   "targets": {
     "main": {
       "sourceMap": true,
+      "includeNodeModules": [
+        "fastest-levenshtein",
+        "fuse.js",
+        "canvas-gauges"
+      ]
+    },
+    "pages": {
+      "publicUrl": "/operadle",
+      "distDir": "gh-pages",
       "includeNodeModules": [
         "fastest-levenshtein",
         "fuse.js",
