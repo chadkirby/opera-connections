@@ -4,22 +4,26 @@
   "description": "guess operas",
   "repository": "https://github.com/chadkirby/operadle.git",
   "author": "Chad Kirby <chad.kirby@gmail.com>",
-  "license": "None",
+  "license": "UNLICENSED",
   "private": false,
   "type": "module",
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build --target pages"
+    "build": "parcel build --target pages",
+    "deploy": "git push origin :gh-pages && git subtree push --prefix gh-pages origin gh-pages"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.2.1",
     "parcel": "^2.6.2",
+    "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {

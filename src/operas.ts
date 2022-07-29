@@ -1,3 +1,5 @@
+import { shuffle } from "./shuffle";
+
 export interface OperaData {
     title: string;
     normalized: string;
@@ -21,12 +23,11 @@ interface RawOpera {
     Scoring?: string;
 }
 
-let rawOperas: RawOpera[] = [
+const rawOperas: RawOpera[] = [
     {
         title: "1984",
         composer: "Maazel, Lorin",
         date: "2005",
-        Librettist: "\n",
         language: "English",
         "Based on": "Nineteen Eighty-Four",
         Premiere: "3 May 2005",
@@ -170,7 +171,6 @@ let rawOperas: RawOpera[] = [
         title: "Billy Budd",
         composer: "Britten",
         date: "1951",
-        Librettist: "\n",
         language: "English",
         "Based on": "Billy Budd",
         Premiere: "1 December 1951"
@@ -197,7 +197,6 @@ let rawOperas: RawOpera[] = [
         title: "Boris Godunov",
         composer: "Mussorgsky, Modest",
         date: "1874",
-        "Native title": "Russian",
         Librettist: "Mussorgsky",
         language: "Russian",
         "Based on": "Boris Godunov",
@@ -418,7 +417,6 @@ let rawOperas: RawOpera[] = [
         title: "Einstein on the Beach",
         composer: "Glass",
         date: "1976",
-        Librettist: "\n",
         Premiere: "July 25, 1976"
     },
     {
@@ -462,8 +460,6 @@ let rawOperas: RawOpera[] = [
         title: "Eugene Onegin",
         composer: "Tchaikovsky",
         date: "1879",
-        "Native title": "Russian",
-        Librettist: "\n",
         language: "Russian",
         "Based on": "Eugene Onegin",
         Premiere: "29 March 1879"
@@ -500,7 +496,6 @@ let rawOperas: RawOpera[] = [
         composer: "Puccini",
         date: "1910",
         Translation: "The Girl of the West",
-        Librettist: "\n",
         language: "Italian",
         "Based on": "David Belasco",
         Premiere: "10 December 1910"
@@ -594,7 +589,6 @@ let rawOperas: RawOpera[] = [
         title: "Francesca da Rimini",
         composer: "Rachmaninoff",
         date: "1906",
-        "Native title": "Russian",
         Librettist: "Modest Ilyich Tchaikovsky",
         language: "Russian",
         "Based on": "Francesca da Rimini",
@@ -780,7 +774,6 @@ let rawOperas: RawOpera[] = [
         title: "Jérusalem",
         composer: "Verdi, Giuseppe",
         date: "1847",
-        Librettist: "\n",
         language: "French",
         "Based on": "I Lombardi alla prima crociata",
         Premiere: "26 November 1847"
@@ -789,8 +782,6 @@ let rawOperas: RawOpera[] = [
         title: "Lady Macbeth of Mtsensk",
         composer: "Shostakovich",
         date: "1934",
-        "Native title": "Russian: ",
-        Librettist: "\n",
         language: "Russian",
         "Based on": "Lady Macbeth of the Mtsensk District",
         Premiere: "22 January 1934"
@@ -799,7 +790,6 @@ let rawOperas: RawOpera[] = [
         title: "Lakmé",
         composer: "Delibes",
         date: "1883",
-        Librettist: "\n",
         language: "French",
         "Based on": "Théodore Pavie's story \"Les babouches du Brahamane\"",
         Premiere: "14 April 1883"
@@ -912,7 +902,6 @@ let rawOperas: RawOpera[] = [
         title: "Madama Butterfly",
         composer: "Puccini",
         date: "1904",
-        Librettist: "\n",
         language: "Italian",
         "Based on": "John Luther Long",
         Premiere: "17 February 1904"
@@ -921,7 +910,6 @@ let rawOperas: RawOpera[] = [
         title: "The Maid of Orleans",
         composer: "Tchaikovsky",
         date: "1881",
-        "Native title": "Russian: ",
         Librettist: "Tchaikovsky",
         language: "Russian",
         "Based on": "Joan of Arc",
@@ -1003,7 +991,6 @@ let rawOperas: RawOpera[] = [
         title: "A Midsummer Night's Dream",
         composer: "Britten",
         date: "1960",
-        Librettist: "\n",
         language: "English",
         "Based on": "A Midsummer Night's Dream",
         Premiere: "11 June 1960"
@@ -1012,7 +999,6 @@ let rawOperas: RawOpera[] = [
         title: "The Miserly Knight",
         composer: "Rachmaninoff",
         date: "1906",
-        "Native title": "Russian",
         language: "Russian",
         "Based on": "Alexander Pushkin",
         Premiere: "24 January 1906"
@@ -1040,7 +1026,6 @@ let rawOperas: RawOpera[] = [
         date: "1914",
         "Native title": "Соловей",
         "Other title": "Le rossignol",
-        Librettist: "\n",
         "Based on": "The Nightingale",
         Premiere: "26 May 1914"
     },
@@ -1066,8 +1051,6 @@ let rawOperas: RawOpera[] = [
         title: "The Nose",
         composer: "Shostakovich",
         date: "1930",
-        "Native title": "Russian: ",
-        Librettist: "\n",
         language: "Russian",
         "Based on": "The Nose",
         Premiere: "18 January 1930"
@@ -1145,7 +1128,6 @@ let rawOperas: RawOpera[] = [
         title: "Les pêcheurs de perles",
         composer: "Bizet",
         date: "1863",
-        Librettist: "\n",
         language: "French",
         Premiere: "30 September 1863"
     },
@@ -1178,7 +1160,6 @@ let rawOperas: RawOpera[] = [
         title: "Prince Igor",
         composer: "Borodin",
         date: "1890",
-        "Native title": "Russian",
         Librettist: "Borodin",
         language: "Russian",
         "Based on": "The Lay of Igor's Host",
@@ -1396,7 +1377,6 @@ let rawOperas: RawOpera[] = [
         title: "Simon Boccanegra",
         composer: "Verdi, Giuseppe",
         date: "1857",
-        Librettist: "\n",
         language: "Italian",
         "Based on": "Antonio García Gutiérrez",
         Premiere: "\n12 March 1857 (1857-03-12) (first version)\n24 March 1881 (1881-03-24) (second version)\n"
@@ -1516,7 +1496,6 @@ let rawOperas: RawOpera[] = [
         title: "The Tsar's Bride",
         composer: "Rimsky-Korsakov",
         date: "1899",
-        "Native title": "Russian",
         Librettist: "Ilia Tyumenev",
         language: "Russian",
         "Based on": "The Tsar's Bride",
@@ -1526,7 +1505,6 @@ let rawOperas: RawOpera[] = [
         title: "Turandot",
         composer: "Puccini",
         date: "1926",
-        Librettist: "\n",
         language: "Italian",
         "Based on": "Carlo Gozzi",
         Premiere: "25 April 1926"
@@ -1621,7 +1599,7 @@ let rawOperas: RawOpera[] = [
     }
 ];
 
-let usableOperas = rawOperas.filter(isUsable);
+const usableOperas = rawOperas.filter(isUsable);
 
 function isUsable(opera: RawOpera): opera is Omit<OperaData, 'normalized'> {
     return 'language' in opera && 'title' in opera && 'composer' in opera && 'date' in opera;
@@ -1631,6 +1609,8 @@ export default usableOperas.map<OperaData>(opera => ({
         ...opera,
         normalized: normalize(opera.title)
     }));
+
+export const shuffled = shuffle(usableOperas, new Date(2022,6,1));
 
 export function normalize(str: string): string {
     return str.normalize("NFD")
