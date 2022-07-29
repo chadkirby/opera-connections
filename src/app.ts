@@ -205,7 +205,7 @@ function doGuess() {
       ...gaugeOptions,
     }).draw();
 
-    let maxHeight = [composerCanvas, languageCanvas, dateCanvas].reduce((acc, cur) => Math.max(acc, cur!.clientHeight), 0);
+    // let maxHeight = [composerCanvas, languageCanvas, dateCanvas].reduce((acc, cur) => Math.max(acc, cur!.clientHeight), 0);
     // for (const canvas of [composerCanvas, languageCanvas, dateCanvas]) {
     //   canvas.style.height = `${maxHeight}px`;
     // }
