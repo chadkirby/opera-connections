@@ -9,7 +9,7 @@ import type { OperaData } from './operas';
 const composers = [...new Set(operas.map((o) => o.composer))].sort();
 const languages = [...new Set(operas.map((o) => o.language))].sort();
 const dates = [...new Set(operas.map((o) => Number(o.date)))].sort((a, z) => a - z);
-const dateRange = dates[dates.length - 1] - dates[0];
+const dateRange = [dates[0], dates[dates.length - 1]];
 
 const locations: Record<string, {capital: string, loc:[number, number]}> = {
   Croatian: { capital: 'Zagreb', loc: [45.815399, 15.966568] },
@@ -36,6 +36,9 @@ const fuse = new Fuse<OperaData>(operas, {
 });
 
 const targetOpera = operas[Math.floor(Math.random() * operas.length)];
+const targetIndex = composers.indexOf(targetOpera.composer);
+console.log({...targetOpera, targetIndex});
+
 
 const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById('guess-button')! as HTMLButtonElement;
@@ -88,18 +91,17 @@ function doGuess() {
     composerCanvas.setAttribute(
       'title',
       composerDist
-       ? `Your guess was written by ${lastFirst(guessedOpera.composer)}, who appears ${ordinal} on an alphabetical list of opera composers, but you are looking for an opera by a composer who appears ${Math.abs(composerDist)} positions ${composerDist > 0 ? 'later' : 'earlier'} on the list.`
+       ? `Your guess was written by ${lastFirst(guessedOpera.composer)}, who is ${ordinal} on an alphabetical list of opera composers, but you are looking for an opera by a composer who appears ${Math.abs(composerDist)} positions ${targetIndex > guessedIndex ? 'later' : 'earlier'} on the list.`
       : `Your guess was written by ${lastFirst(guessedOpera.composer)}, who is the composer you are looking for.`,
 
     );
     new RadialGauge({
       renderTo: composerCanvas,
       units: '(alpha)',
-      minValue: -composers.length,
-      value: composerDist,
+      minValue: 0,
+      value: guessedIndex,
       maxValue: composers.length,
       majorTicks: [
-        -composers.length.toString(),
         '0',
         composers.length.toString(),
       ],
@@ -107,8 +109,8 @@ function doGuess() {
       strokeTicks: true,
       highlights: [
         {
-          from: -25,
-          to: 25,
+          from: targetIndex-2,
+          to: targetIndex+2,
           color: 'rgba(124, 252, 0, .75)',
         },
       ],
@@ -116,54 +118,32 @@ function doGuess() {
     }).draw();
 
     const dateDist = Number(targetOpera.date) - Number(guessedOpera.date);
-    let units: string = '';
-    switch (true) {
-      case Math.abs(dateDist) > 250:
-        units = 'several centuries';
-        break;
-      case Math.abs(dateDist) > 100:
-        units = 'a few centuries';
-        break;
-      case Math.abs(dateDist) > 50:
-        units = 'many decades';
-        break;
-      case Math.abs(dateDist) > 30:
-        units = 'several decades';
-        break;
-      case Math.abs(dateDist) > 10:
-        units = 'a few decades';
-        break;
-      case Math.abs(dateDist) > 5:
-        units = 'several years';
-        break;
-      case Math.abs(dateDist) > 1:
-        units = 'a few years';
-        break;
-    }
     const dateCanvas = document.getElementById(id)!.querySelector('.date-score canvas') as HTMLCanvasElement;
     dateCanvas?.setAttribute(
       'title',
       dateDist
-        ? `Your guess premiered in ${guessedOpera.date}, but you are looking for an opera that premiered ${units} ${dateDist > 0 ? 'later' : 'earlier'}.`
+        ? `Your guess premiered in ${guessedOpera.date}, but you are looking for an opera that premiered ${dateDist} years ${dateDist > 0 ? 'later' : 'earlier'}.`
         : `Your guess premiered in ${guessedOpera.date}, which is the year you are looking for.`,
     );
     new RadialGauge({
       renderTo: dateCanvas,
       units: 'years',
-      minValue: -250,
-      value: dateDist,
-      maxValue: 250,
+      minValue: 1600,
+      value: Number(guessedOpera.date),
+      maxValue: 2000,
       majorTicks: [
-        '-250',
-        '0',
-        '250',
+        '1600',
+        '1700',
+        '1800',
+        '1900',
+        '2000',
       ],
       minorTicks: 2,
       strokeTicks: true,
       highlights: [
         {
-          from: -25,
-          to: 25,
+          from: Number(targetOpera.date) - 10,
+          to: Number(targetOpera.date) + 10,
           color: 'rgba(124, 252, 0, .75)',
         },
       ],
@@ -178,7 +158,7 @@ function doGuess() {
       'title',
       languageDist
         ? `Your guess is sung in ${guessedOpera.language}, which is spoken in ${guessLoc.capital}, which is ${languageDist.toFixed(0)}km away from the capital of the country where they speak the language you seek.`
-        : `Your guess is sung in ${guessedOpera.language}, which is the language you are lookigng for.`,
+        : `Your guess is sung in ${guessedOpera.language}, which is the language you are looking for.`,
     );
     new RadialGauge({
       renderTo: languageCanvas,
