@@ -8,17 +8,40 @@
   </head>
   <body>
     <h1>Welcome to Operadle!</h1>
-    <input type="text" id="opera-input" placeholder="Guess an opera title"></input>
+
+    <div class="query-row">
+      <p>Hi! Can you guess what's todays opera?</p>
+    </div>
+
+    <slot name="query-slot"></slot>
+
+    <input type="text" id="opera-input" placeholder="What's your guess?"></input>
     <button id="guess-button" disabled>Guess</button>
     <!-- <div id="guess-controls">
       <div id="selected-opera"></div>
     </div> -->
+
+    <template id="query-template">
+      <div class="query-row">
+        <p></p>
+      </div>
+    </template>
 
     <template id="score-template">
       <div class="score-row">
         <h2>{{title}}</h2>
 
         <div class="scores">
+
+          <div class="language-score score">
+            <canvas
+              data-type="radial-gauge"
+              width="200"
+              height="200"
+              title="How far (in km) your language was off comparing the geographical locations of the capital cities of the country for which the language is known"
+            ></canvas>
+            <h3>Language</h3>
+          </div>
 
           <div class="composer-score score">
             <canvas
@@ -30,15 +53,6 @@
             <h3>Composer</h3>
           </div>
 
-          <div class="language-score score">
-            <canvas
-              data-type="radial-gauge"
-              width="200"
-              height="200"
-              title="How far (in km) your language was off comparing the geographical locations of the capital cities of the country for which the language is known"
-            ></canvas>
-            <h3>Language</h3>
-          </div>
 
           <div class="date-score score">
             <canvas
