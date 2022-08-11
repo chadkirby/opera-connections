@@ -1,0 +1,10 @@
+[functions]
+
+  # Flags "node-fetch" as an external node module for all functions.
+  external_node_modules = ["node-fetch"]
+
+  # Includes all wiki json files
+  included_files = ["operas.json", "languages.json", "wiki/**", "utils/**"]
+
+[dev]
+  targetPort = 5173

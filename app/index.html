@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operadle</title>
+    <script type="module" src="main.ts"></script>
+  </head>
+  <body>
+    <h1>Welcome to Operadle!</h1>
+
+    <div class="query-row">
+      <p>Hi! Can you guess what's todays opera?</p>
+      <div id="composer-shower"><span class="triangle">▸</span> Show me a picture of the composer</div>
+      <div id="composer-picture" class="hide"></div>
+    </div>
+
+    <slot name="query-slot"></slot>
+
+    <input type="text" id="opera-input" placeholder="What's your guess?">
+    <button id="guess-button" disabled>Guess</button>
+    <!-- <div id="guess-controls">
+      <div id="selected-opera"></div>
+    </div> -->
+
+    <template id="query-template">
+      <div class="query-row">
+        <p></p>
+      </div>
+    </template>
+
+    <template id="score-template">
+      <div class="score-row">
+        <h2>{{title}}</h2>
+
+        <div class="scores">
+
+          <div class="language-score score">
+            <canvas
+              data-type="radial-gauge"
+              width="200"
+              height="200"
+              title="How far (in km) your language was off comparing the geographical locations of the capital cities of the country for which the language is known"
+            ></canvas>
+            <h3>Language</h3>
+          </div>
+
+          <div class="composer-score score">
+            <canvas
+              data-type="radial-gauge"
+              width="200"
+              height="200"
+              title="How far your composer was off in an alphabetized list of composers"
+            ></canvas>
+            <h3>Composer</h3>
+          </div>
+
+
+          <div class="date-score score">
+            <canvas
+              data-type="radial-gauge"
+              width="200"
+              height="200"
+              title="Number of years your guess was off"
+            ></canvas>
+            <h3>Premier Date</h3>
+          </div>
+        </div>
+      </div>
+    </template>
+  </body>
+</html>
