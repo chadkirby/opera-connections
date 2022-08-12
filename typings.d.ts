@@ -14,6 +14,7 @@ export interface TargetOpera extends OperaData {
   operaSummary: OperaSummary;
   recordings: RecordingItem[];
   roles: RoleItem[];
+  otherOperaTitles: string[];
 }
 
 export interface ListedOpera extends OperaData {
@@ -134,4 +135,8 @@ export interface RecordingItem {
   year: number;
   cast: string[];
   conductor: string;
+}
+
+interface TitleHref extends Partial<OperaData> {
+  titleHref: string;
 }

@@ -1,7 +1,5 @@
 import { builder, Handler } from '@netlify/functions';
 
-// import operas from '../../operas.json';
-
 const myHandler: Handler = async (event) => {
   const { URLSearchParams } = await import('url');
   const fetch = await import('node-fetch');

@@ -1,19 +1,58 @@
 import fs from 'fs';
 import path from 'path';
+import { builder, Handler } from '@netlify/functions';
+import seedrandom from 'seedrandom';
+
+import operas from '../../operas.json';
 import type {
   ComposerSummary,
   InfoBox,
-  OperaData,
   OperaSummary,
   RecordingData,
   RoleData,
-} from '../typings.js';
+  TargetOpera,
+  TitleHref,
+} from '../../typings.js';
 
-import languages from '../languages.json';
+const myHandler: Handler = async (event) => {
+  const params = new URLSearchParams(event.rawQuery);
+  console.error(event);
 
-export interface TitleHref extends Partial<OperaData> {
-  titleHref: string;
-}
+  const href = decodeURIComponent(params.get('href')!);
+  console.error({ href });
+  const targetOpera = operas.find((o) => o.titleHref.slice(1) === href);
+  if (!targetOpera) {
+    return {
+      statusCode: 404,
+      body: 'Not found',
+    };
+  }
+  console.log(`Target opera: ${targetOpera.title}`);
+
+  const composerSummary = await getComposerSummary(targetOpera);
+  const otherOperaTitles = operas
+    .filter((o) => o.composerHref === targetOpera.composerHref)
+    .map((o) => o.title);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      ...targetOpera,
+      composer: composerSummary?.title,
+      thumbnailUrl: composerSummary?.thumbnail.source,
+      composerSummary: composerSummary || {},
+      infobox: (await getInfoBox(targetOpera)) || {},
+      operaSummary: (await getSummary(targetOpera)) || {},
+      recordings: (await getRecordings(targetOpera))?.items || [],
+      roles: (await getRoles(targetOpera))?.items || [],
+      otherOperaTitles,
+    } as TargetOpera),
+  };
+};
+
+const handler = builder(myHandler);
+
+export { handler };
 
 const wikiDir = '.';
 export async function getInfoBox(opera: TitleHref): Promise<InfoBox | null> {
@@ -89,25 +128,4 @@ export async function getComposerSummary(
   } catch (e) {
     return null;
   }
-}
-
-export async function getTitles(opera: OperaData): Promise<string[] | null> {
-  const infobox = await getInfoBox(opera);
-  const { 'Other title': otherTitle, Translation } = infobox || {};
-  return [
-    ...new Set([
-      opera.title,
-      ...(infobox?.titles || []),
-      ...(otherTitle ? [otherTitle] : []),
-      ...(Translation ? [Translation] : []),
-    ]),
-  ];
-}
-
-export async function getLanguage(opera: TitleHref): Promise<string | null> {
-  for (const [lang, operaHrefs] of Object.entries(languages)) {
-    if (operaHrefs.includes(decodeURIComponent(opera.titleHref))) return lang;
-  }
-  const infobox = await getInfoBox(opera);
-  return infobox?.Language || null;
 }

@@ -1,9 +1,9 @@
 // @ts-check
-import fs from "fs";
-import path from "path";
-import { wikiFetch } from "./wiki-fetch.js";
+import fs from 'fs';
+import path from 'path';
+import { wikiFetch } from './wiki-fetch.js';
 
-const summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary";
+const summaryUrl = 'https://en.wikipedia.org/api/rest_v1/page/summary';
 
 /**
  *
@@ -13,18 +13,18 @@ const summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary";
  */
 async function getSummary(href) {
   console.error(`fetching ${decodeURIComponent(href)}`);
-  const json = await wikiFetch(`${summaryUrl}/${href.split("/").pop()}`);
+  const json = await wikiFetch(`${summaryUrl}/${href.split('/').pop()}`);
   return json ? JSON.parse(json) : null;
 }
 
 const operasJsonFile = process.argv[2];
 const wikiDir = path.dirname(operasJsonFile);
-const operas = JSON.parse(fs.readFileSync(operasJsonFile, "utf8"));
+const operas = JSON.parse(fs.readFileSync(operasJsonFile, 'utf8'));
 for (const opera of operas) {
   const operaSummaryFile = path.join(
     wikiDir,
     decodeURIComponent(opera.titleHref),
-    "summary.json"
+    'summary.json'
   );
   if (!fs.existsSync(operaSummaryFile)) {
     let summary = await getSummary(opera.titleHref);
@@ -42,7 +42,7 @@ for (const opera of operas) {
   const composerSummaryFile = path.join(
     wikiDir,
     decodeURIComponent(opera.composerHref),
-    "summary.json"
+    'summary.json'
   );
   if (opera.composerHref && !fs.existsSync(composerSummaryFile)) {
     let summary = await getSummary(opera.composerHref);

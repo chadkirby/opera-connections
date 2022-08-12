@@ -8,3 +8,17 @@
 
 [dev]
   targetPort = 5173
+
+[[redirects]]
+  from = "/random"
+  to = "/"
+  status = 301
+  force = false
+  query = {random = "true"}
+
+[[redirects]]
+  from = "/wiki/*"
+  to = "/"
+  status = 301
+  force = false
+  query = {title = ":splat"}
