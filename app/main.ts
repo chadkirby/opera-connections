@@ -162,8 +162,12 @@ guessButton.onclick = doGuess;
 inputEl.oninput = () => {
   selectedOperaEl.textContent = '';
 
-  const input = inputEl.value;
-  const [suggestion] = fuse.search(normalize(input), { limit: 1 });
+  let input = normalize(inputEl.value);
+  let [suggestion] = fuse.search(input, { limit: 1 });
+  while (!suggestion && input.length > 6) {
+    input = input.slice(0, -1);
+    [suggestion] = fuse.search(input, { limit: 1 });
+  }
   if (suggestion) {
     guessButton.removeAttribute('disabled');
     const [
