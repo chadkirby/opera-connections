@@ -12,7 +12,7 @@
     <h1>Welcome to Operadle!</h1>
 
     <div class="query-row">
-      <p>Hi! Can you guess the opera?</p>
+      <p id="guess-prompt">Guess today's opera</p>
     </div>
 
     <div id="input-row" >
@@ -22,15 +22,16 @@
 
     <slot name="query-slot"></slot>
 
-    <div id="composer-shower"><span class="triangle">▸</span> Show me what the composer looks like.</div>
-    <div id="composer-picture" class="hide"></div>
-
     <div id="hint-row">
       <button id="hint-button">Give me a hint</button>
       <button id="giveup-button">I Give Up!</button>
     </div>
 
     <slot name="hint-slot"></slot>
+
+    <div id="composer-picture" class="hide">
+      <p>This is an image associated with the composer of the opera you are looking for.</p>
+    </div>
 
     <template id="query-template">
       <div class="query-row">

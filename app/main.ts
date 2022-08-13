@@ -5,6 +5,8 @@ import type { ListedOpera } from '../typings.js';
 let operaUrl = '/.netlify/functions/today';
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
+  document.getElementById('guess-prompt')!.textContent =
+    'Guess a random opera.';
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
@@ -37,11 +39,8 @@ const img = document.createElement('img');
 img.src = `/.netlify/functions/image?url=${encodeURIComponent(
   targetOpera.thumbnailUrl
 )}`;
-document.getElementById('composer-picture')?.appendChild(img);
-document.getElementById('composer-shower')!.onclick = () => {
-  document.getElementById('composer-picture')?.classList.toggle('hide');
-  document.getElementById('composer-shower')?.classList.toggle('hide');
-};
+const composerPic = document.getElementById('composer-picture')!;
+composerPic?.appendChild(img);
 
 const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById(
@@ -63,6 +62,10 @@ const hintSlot = document.querySelector(
 ) as HTMLSlotElement;
 
 hintButton.onclick = () => {
+  if (composerPic.classList.contains('hide')) {
+    composerPic.classList.toggle('hide');
+    return;
+  }
   const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
   const p = queryRow.querySelector('p')!;
   p.textContent = hints.shift()!;
@@ -79,10 +82,10 @@ giveupButton.onclick = () => {
     wrong`The opera you were looking for was ${targetOpera.title}, an ${targetOpera.language} opera by ${targetOpera.composer} that premiered in ${targetOpera.year}.`
   );
   querySlot.before(queryRow);
-  guessButton.remove();
-  hintButton.remove();
-  giveupButton.remove();
-  inputEl.remove();
+  disableGuessBtn();
+  hintButton.setAttribute('disabled', 'disabled');
+  giveupButton.setAttribute('disabled', 'disabled');
+  inputEl.setAttribute('disabled', 'disabled');
 };
 
 const guesses: ListedOpera[] = [];
@@ -133,6 +136,9 @@ async function doGuess() {
     }
     p.appendChild(document.createTextNode('The opera you are looking for: '));
     for (const [i, remark] of remarks.entries()) {
+      if (remarks.length > 1 && i === remarks.length - 1) {
+        p.appendChild(document.createTextNode('and '));
+      }
       p.appendChild(remark);
       if (i < remarks.length - 1) {
         p.appendChild(document.createTextNode('; '));

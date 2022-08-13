@@ -55,7 +55,7 @@ body {
 }
 
 .hide {
-  display: none;
+  display: none!important;
 }
 
 .triangle {
@@ -66,11 +66,11 @@ body {
 .query-row {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
-.query-row, #input-row {
+.query-row, #input-row, #composer-picture {
   max-width: 35rem;
-  width: max-content;
   border-top: 1px solid #ccc;
 }
 
@@ -78,7 +78,8 @@ body {
   display: grid;
   grid-template-columns: 10rem 20rem;
   column-gap: 10px;
-
+  width: max-content;
+  padding-top: 1em;
 }
 #hint-row {
   display: grid;
@@ -86,6 +87,12 @@ body {
   column-gap: 10px;
 }
 
+#composer-picture {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  width: max-content;
+}
 
 
 button {
@@ -122,7 +129,7 @@ button:disabled {
   6. Improve media defaults
 */
 img, picture, video, canvas, svg {
-  display: block;
+  /* display: block; */
   max-width: 100%;
 }
 /*
