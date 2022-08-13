@@ -2,7 +2,6 @@ import { builder, Handler } from '@netlify/functions';
 import seedrandom from 'seedrandom';
 
 import { getOperaList } from '../../utils/opera-list.js';
-const rng = seedrandom('shuffle-operas-1');
 
 const myHandler: Handler = async (event) => {
   const operas = await getOperaList();
@@ -14,11 +13,9 @@ const myHandler: Handler = async (event) => {
   const daysSinceOrigin = Math.floor(
     (today.getTime() - origin.getTime()) / 86400000
   );
-  let targetIndex = params.get('random')
-    ? Math.floor(rng() * operas.length)
-    : -1;
-
-  if (targetIndex < 0) {
+  let targetIndex = (Math.random() * operas.length) | 0;
+  if (!params.get('random')) {
+    const rng = seedrandom('shuffle-operas-1');
     for (let d = 0; d < daysSinceOrigin; d++) {
       targetIndex = (rng() * operas.length) | 0;
     }
