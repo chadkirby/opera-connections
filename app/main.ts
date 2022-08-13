@@ -61,6 +61,9 @@ const hintSlot = document.querySelector(
   'slot[name="hint-slot"]'
 ) as HTMLSlotElement;
 
+// focus the input element
+inputEl.focus();
+
 hintButton.onclick = () => {
   if (composerPic.classList.contains('hide')) {
     composerPic.classList.toggle('hide');
