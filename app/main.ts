@@ -61,6 +61,9 @@ const hintSlot = document.querySelector(
   'slot[name="hint-slot"]'
 ) as HTMLSlotElement;
 
+// focus the input element
+inputEl.focus();
+
 hintButton.onclick = () => {
   if (composerPic.classList.contains('hide')) {
     composerPic.classList.toggle('hide');
@@ -159,8 +162,12 @@ guessButton.onclick = doGuess;
 inputEl.oninput = () => {
   selectedOperaEl.textContent = '';
 
-  const input = inputEl.value;
-  const [suggestion] = fuse.search(normalize(input), { limit: 1 });
+  let input = normalize(inputEl.value);
+  let [suggestion] = fuse.search(input, { limit: 1 });
+  while (!suggestion && input.length > 6) {
+    input = input.slice(0, -1);
+    [suggestion] = fuse.search(input, { limit: 1 });
+  }
   if (suggestion) {
     guessButton.removeAttribute('disabled');
     const [
