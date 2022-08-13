@@ -1,0 +1,153 @@
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin
+*/
+* {
+  margin: 0;
+}
+/*
+  3. Allow percentage-based heights in the application
+*/
+html, body {
+  height: 100%;
+}
+/*
+  Typographic tweaks!
+  4. Add accessible line-height
+  5. Improve text rendering
+*/
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 1rem;
+}
+
+#guess-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+}
+
+#composer-shower {
+  cursor: pointer;
+}
+
+#composer-picture {
+  margin-top: 1rem;
+}
+
+.wrong-guess {
+  color: rgb(131, 47, 47);
+}
+
+.correct-guess {
+  color: rgb(37, 114, 37);
+}
+
+.hide {
+  display: none!important;
+}
+
+.triangle {
+  font-size: larger;
+  margin-right: 0.5rem;
+}
+
+.query-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.query-row, #input-row, #composer-picture {
+  max-width: 35rem;
+  border-top: 1px solid #ccc;
+}
+
+#input-row {
+  display: grid;
+  grid-template-columns: 10rem 20rem;
+  column-gap: 10px;
+  width: max-content;
+  padding-top: 1em;
+}
+#hint-row {
+  display: grid;
+  grid-template-columns: 15rem 15rem;
+  column-gap: 10px;
+}
+
+#composer-picture {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  width: max-content;
+}
+
+
+button {
+  box-shadow:
+  inset 0px 1px 0px 0px #ffffff;
+  background:
+  linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+  background-color:#ededed;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  cursor:
+  pointer;
+  color:#1e1e1e;
+  font-family: Verdana;
+  font-size:16px;
+  padding:6px 24px;
+  text-decoration:
+  none;
+  text-shadow:0px 1px 0px #ffffff;
+}
+button:hover {
+  background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+  background-color:#dfdfdf;
+}
+button:active {
+  position:relative;
+  top:1px;
+}
+button:disabled {
+  color:#7777
+}
+
+/*
+  6. Improve media defaults
+*/
+img, picture, video, canvas, svg {
+  /* display: block; */
+  max-width: 100%;
+}
+/*
+  7. Remove built-in form typography styles
+*/
+input, textarea, select {
+  font: inherit;
+}
+/*
+  8. Avoid text overflows
+*/
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+/*
+  9. Create a root stacking context
+*/
+#root, #__next {
+  isolation: isolate;
+}
+

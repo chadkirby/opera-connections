@@ -4,47 +4,57 @@
   "description": "guess operas",
   "repository": "https://github.com/chadkirby/operadle.git",
   "author": "Chad Kirby <chad.kirby@gmail.com>",
-  "license": "None",
+  "license": "UNLICENSED",
   "private": false,
   "type": "module",
   "source": "src/index.html",
-  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "licenses": [
+    {
+      "type": "UNLICENSED"
+    }
+  ],
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build --target pages"
+    "dev": "tsc && vite",
+    "build": "tsc && vite build --emptyOutDir",
+    "preview": "vite preview",
+    "debug": "NODE_OPTIONS=--inspect netlify dev",
+    "init:operas": "node init/fetch-prominent.js operas.json",
+    "init:summaries": "node init/fetch-opera-summaries.js operas.json",
+    "init:info": "node init/fetch-opera-info.js operas.json",
+    "init:languages": "node init/fetch-languages.js languages.json"
   },
   "devDependencies": {
+    "@types/jsdom": "^20.0.0",
+    "@types/sbd": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
+    "esbuild-wasm": "^0.15.1",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.2",
-    "parcel": "^2.6.2",
-    "typescript": "^4.7.4"
+    "eslint-plugin-prettier": "^4.2.1",
+    "jsdom": "^20.0.0",
+    "netlify-cli": "^10.15.0",
+    "node-fetch": "^3.2.10",
+    "prettier": "^2.7.1",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.6"
   },
   "dependencies": {
+    "@ckirby/block-re": "^3.0.1",
+    "@ckirby/dom-dom-dom-dommmm": "^8.2.0",
+    "@ckirby/mr-lister": "^3.1.0",
+    "@ckirby/opera-info": "^1.1.0",
+    "@ckirby/sbd": "^2.1.0",
+    "@netlify/functions": "^1.0.0",
     "autocompleter": "^6.1.3",
-    "canvas-gauges": "^2.1.7-radial",
+    "dotenv": "^16.0.1",
     "fastest-levenshtein": "1.0.13",
-    "fuse.js": "^6.6.2"
+    "fuse.js": "^6.6.2",
+    "seedrandom": "^3.0.5"
   },
-  "targets": {
-    "main": {
-      "sourceMap": true,
-      "includeNodeModules": [
-        "fastest-levenshtein",
-        "fuse.js",
-        "canvas-gauges"
-      ]
-    },
-    "pages": {
-      "publicUrl": "/operadle",
-      "distDir": "gh-pages",
-      "includeNodeModules": [
-        "fastest-levenshtein",
-        "fuse.js",
-        "canvas-gauges"
-      ]
-    }
+  "resolutions": {
+    "esbuild": "esbuild-wasm@0.15.1"
   }
 }
