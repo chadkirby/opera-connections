@@ -15,15 +15,21 @@
       <p>Hi! Can you guess the opera?</p>
     </div>
 
-    <slot name="query-slot"></slot>
+    <div id="input-row" >
+      <input type="text" id="opera-input" placeholder="What's your guess?">
+      <button id="guess-button" disabled>Guess</button>
+    </div>
 
-    <input type="text" id="opera-input" placeholder="What's your guess?">
-    <button id="guess-button" disabled>Guess</button>
+    <slot name="query-slot"></slot>
 
     <div id="composer-shower"><span class="triangle">▸</span> Show me what the composer looks like.</div>
     <div id="composer-picture" class="hide"></div>
 
-    <button id="hint-button">Give me a hint</button>
+    <div id="hint-row">
+      <button id="hint-button">Give me a hint</button>
+      <button id="giveup-button">I Give Up!</button>
+    </div>
+
     <slot name="hint-slot"></slot>
 
     <template id="query-template">

@@ -1,7 +1,6 @@
 import './style.css';
 import Fuse from 'fuse.js';
 import type { ListedOpera } from '../typings.js';
-import { makeHints } from './hints.js';
 
 let operaUrl = '/.netlify/functions/today';
 if (window.location.href.endsWith('random')) {
@@ -32,7 +31,7 @@ const fuse = new Fuse(
   }
 );
 
-const hints = makeHints(targetOpera);
+const hints = targetOpera.hints.slice();
 
 const img = document.createElement('img');
 img.src = `/.netlify/functions/image?url=${encodeURIComponent(
@@ -49,6 +48,9 @@ const guessButton = document.getElementById(
   'guess-button'
 )! as HTMLButtonElement;
 const hintButton = document.getElementById('hint-button')! as HTMLButtonElement;
+const giveupButton = document.getElementById(
+  'giveup-button'
+)! as HTMLButtonElement;
 const selectedOperaEl = guessButton; // document.getElementById("selected-opera")!;
 const queryTemplate = document.getElementById(
   'query-template'
@@ -64,10 +66,23 @@ hintButton.onclick = () => {
   const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
   const p = queryRow.querySelector('p')!;
   p.textContent = hints.shift()!;
-  hintSlot.before(queryRow);
+  hintSlot.after(queryRow);
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
+};
+
+giveupButton.onclick = () => {
+  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
+  const p = queryRow.querySelector('p')!;
+  p.appendChild(
+    wrong`The opera you were looking for was ${targetOpera.title}, an ${targetOpera.language} opera by ${targetOpera.composer} that premiered in ${targetOpera.year}.`
+  );
+  querySlot.before(queryRow);
+  guessButton.remove();
+  hintButton.remove();
+  giveupButton.remove();
+  inputEl.remove();
 };
 
 const guesses: ListedOpera[] = [];
@@ -84,55 +99,50 @@ async function doGuess() {
   const p = queryRow.querySelector('p')!;
   if (guessedOpera.titleHref === targetOpera.titleHref) {
     p.classList.add('correct');
-    p.textContent = 'Correct!';
+    p.appendChild(
+      correct`🎉 ${guessedOpera.titles[0]} is the opera you are looking for.`
+    );
   } else {
-    const remarks = [
-      `Sorry, ${guessedOpera.titles[0]} is not the opera you are looking for.`,
-    ];
+    p.appendChild(
+      wrong`😢 ${guessedOpera.titles[0]} is not the opera you are looking for.`
+    );
+    p.appendChild(document.createElement('br'));
+    const remarks = [];
     if (guessedOpera.composerHref === targetOpera.composerHref) {
       if (guesses[1]?.composerHref !== targetOpera.composerHref) {
-        remarks.push(
-          `But the opera you are looking for was composed by ${targetOpera.composer}!`
-        );
+        remarks.push(correct`was composed by ${targetOpera.composer}`);
       }
     } else {
-      remarks.push(
-        `The opera you are looking for was not composed by ${guessedOpera.composer}.`
-      );
+      remarks.push(wrong`was not composed by ${guessedOpera.composer}`);
     }
     if (guessedOpera.language === targetOpera.language) {
       if (guesses[1]?.language !== targetOpera.language) {
-        remarks.push(
-          `But the opera you are looking for was in ${targetOpera.language}!`
-        );
+        remarks.push(correct`was in ${targetOpera.language}`);
       }
     } else {
-      remarks.push(
-        `The opera you are looking for was not in ${guessedOpera.language}.`
-      );
+      remarks.push(wrong`was not in ${guessedOpera.language}`);
     }
     if (guessedOpera.year === targetOpera.year) {
       if (guesses[1]?.year !== targetOpera.year) {
-        remarks.push(
-          `But the opera you are looking for did premiere in ${targetOpera.year}!`
-        );
+        remarks.push(correct`did premiere in ${targetOpera.year}`);
       }
-    } else if (guessedOpera.year < targetOpera.year) {
-      remarks.push(
-        `The opera you are looking for premiered before ${guessedOpera.year}.`
-      );
+    } else if (targetOpera.year < guessedOpera.year) {
+      remarks.push(wrong`premiered before ${guessedOpera.year.toString()}`);
     } else {
-      remarks.push(
-        `The opera you are looking for premiered after ${guessedOpera.year}.`
-      );
+      remarks.push(wrong`premiered after ${guessedOpera.year.toString()}`);
     }
-    for (const remark of remarks) {
-      p.appendChild(document.createTextNode(remark));
-      p.appendChild(document.createElement('br'));
+    p.appendChild(document.createTextNode('The opera you are looking for: '));
+    for (const [i, remark] of remarks.entries()) {
+      p.appendChild(remark);
+      if (i < remarks.length - 1) {
+        p.appendChild(document.createTextNode('; '));
+      } else {
+        p.appendChild(document.createTextNode('.'));
+      }
     }
   }
 
-  querySlot.before(queryRow);
+  querySlot.after(queryRow);
 
   inputEl.value = '';
   fuse.removeAt(Number(selectedOperaEl.dataset.refIndex)!);
@@ -190,8 +200,8 @@ function split(title: string, indices: [number, number]) {
   let curr = 0;
   const result: string[] = [];
   for (const index of indices) {
-    result.push(title.substring(curr, index + 1));
-    curr = index + 1;
+    result.push(title.substring(curr, index));
+    curr = index;
   }
   result.push(title.substring(curr));
   return result;
@@ -204,4 +214,37 @@ function normalize(str: string): string {
     .replace(/\s/g, ' ')
     .replace(/[^\w\s]/g, '_')
     .trim();
+}
+
+// tagged template function to output a <span> element with the given text content
+function wrong(
+  literals: TemplateStringsArray,
+  ...values: string[]
+): HTMLSpanElement {
+  const span = getSpan(literals, ...values);
+  span.classList.add('wrong-guess');
+  return span;
+}
+// tagged template function to output a <span> element with the given text content
+function correct(
+  literals: TemplateStringsArray,
+  ...values: string[]
+): HTMLSpanElement {
+  const span = getSpan(literals, ...values);
+  span.classList.add('correct-guess');
+  return span;
+}
+
+function getSpan(literals: TemplateStringsArray, ...values: string[]) {
+  const span = document.createElement('span');
+  for (const i of literals.keys()) {
+    span.appendChild(document.createTextNode(literals[i]));
+    const val = values[i];
+    if (val) {
+      const strong = document.createElement('strong');
+      strong.textContent = val;
+      span.appendChild(strong);
+    }
+  }
+  return span;
 }

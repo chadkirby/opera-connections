@@ -1,10 +1,10 @@
 [functions]
-
   # Flags "node-fetch" as an external node module for all functions.
-  external_node_modules = ["node-fetch"]
+  external_node_modules = ["node-fetch", "@ckirby/opera-info"]
 
-  # Includes all wiki json files
-  included_files = ["operas.json", "languages.json", "wiki/**", "utils/**"]
+  included_files = ["utils/**"]
+
+  node_bundler = "esbuild"
 
 [dev]
   targetPort = 5173

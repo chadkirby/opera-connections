@@ -30,10 +30,6 @@ body {
   row-gap: 1rem;
 }
 
-#opera-input {
-  width: 50%;
-}
-
 #guess-controls {
   display: flex;
   flex-direction: row;
@@ -50,6 +46,14 @@ body {
   margin-top: 1rem;
 }
 
+.wrong-guess {
+  color: rgb(131, 47, 47);
+}
+
+.correct-guess {
+  color: rgb(37, 114, 37);
+}
+
 .hide {
   display: none;
 }
@@ -62,12 +66,57 @@ body {
 .query-row {
   display: flex;
   flex-direction: column;
+}
+
+.query-row, #input-row {
+  max-width: 35rem;
   width: max-content;
   border-top: 1px solid #ccc;
-  width: 50%;
+}
+
+#input-row {
+  display: grid;
+  grid-template-columns: 10rem 20rem;
+  column-gap: 10px;
+
+}
+#hint-row {
+  display: grid;
+  grid-template-columns: 15rem 15rem;
+  column-gap: 10px;
 }
 
 
+
+button {
+  box-shadow:
+  inset 0px 1px 0px 0px #ffffff;
+  background:
+  linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+  background-color:#ededed;
+  border-radius:12px;
+  border:1px solid #dcdcdc;
+  cursor:
+  pointer;
+  color:#1e1e1e;
+  font-family: Verdana;
+  font-size:16px;
+  padding:6px 24px;
+  text-decoration:
+  none;
+  text-shadow:0px 1px 0px #ffffff;
+}
+button:hover {
+  background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+  background-color:#dfdfdf;
+}
+button:active {
+  position:relative;
+  top:1px;
+}
+button:disabled {
+  color:#7777
+}
 
 /*
   6. Improve media defaults
@@ -79,7 +128,7 @@ img, picture, video, canvas, svg {
 /*
   7. Remove built-in form typography styles
 */
-input, button, textarea, select {
+input, textarea, select {
   font: inherit;
 }
 /*
@@ -95,7 +144,3 @@ p, h1, h2, h3, h4, h5, h6 {
   isolation: isolate;
 }
 
-
-button {
-  font-size: larger;
-}
