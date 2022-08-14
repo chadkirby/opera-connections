@@ -3,10 +3,10 @@ import Fuse from 'fuse.js';
 import type { ListedOpera } from '../typings.js';
 
 let operaUrl = '/.netlify/functions/today';
+const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
-  document.getElementById('guess-prompt')!.textContent =
-    'Guess a random opera.';
+  guessPrompt.textContent = 'Guess a random opera.';
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
@@ -14,7 +14,11 @@ if (params.get('href') !== null) {
 }
 const today = await fetch(operaUrl);
 const targetOpera = await today.json();
-console.log(targetOpera.title);
+if (targetOpera.today) {
+  guessPrompt.textContent = `Guess the opera of ${new Date(
+    targetOpera.today
+  ).toDateString()} by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
+}
 
 const operas = await fetch('/.netlify/functions/operas');
 const operaList = (await operas.json()) as ListedOpera[];
@@ -54,6 +58,9 @@ const selectedOperaEl = guessButton; // document.getElementById("selected-opera"
 const queryTemplate = document.getElementById(
   'query-template'
 ) as HTMLTemplateElement;
+const hintTemplate = document.getElementById(
+  'hint-template'
+) as HTMLTemplateElement;
 const querySlot = document.querySelector(
   'slot[name="query-slot"]'
 ) as HTMLSlotElement;
@@ -61,18 +68,15 @@ const hintSlot = document.querySelector(
   'slot[name="hint-slot"]'
 ) as HTMLSlotElement;
 
-// focus the input element
-inputEl.focus();
-
 hintButton.onclick = () => {
   if (composerPic.classList.contains('hide')) {
     composerPic.classList.toggle('hide');
     return;
   }
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
-  const p = queryRow.querySelector('p')!;
+  const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
+  const p = hintRow.querySelector('p')!;
   p.textContent = hints.shift()!;
-  hintSlot.after(queryRow);
+  hintSlot.after(hintRow);
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
@@ -202,7 +206,7 @@ inputEl.oninput = () => {
 };
 
 function disableGuessBtn() {
-  selectedOperaEl.textContent = 'Unknown opera';
+  selectedOperaEl.textContent = 'My guess';
   delete selectedOperaEl.dataset.refIndex;
   guessButton.setAttribute('disabled', 'disabled');
 }
@@ -265,3 +269,6 @@ function getSpan(literals: TemplateStringsArray, ...values: string[]) {
   }
   return span;
 }
+
+// focus the input element
+inputEl.focus();
