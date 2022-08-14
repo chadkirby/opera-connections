@@ -9,7 +9,7 @@ const myHandler: Handler = async (event) => {
 
   const origin = new Date('2022-07-30T08:00:00');
   const today = new Date();
-  today.setUTCHours(8, 0, 0, 0); // last midnight, GMT+8
+  today.setUTCHours(-8, 0, 0, 0); // last midnight, GMT+8
   const daysSinceOrigin = Math.floor(
     (today.getTime() - origin.getTime()) / 86400000
   );
@@ -25,7 +25,7 @@ const myHandler: Handler = async (event) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(targetOpera),
+    body: JSON.stringify({ ...targetOpera, today }),
   };
 };
 

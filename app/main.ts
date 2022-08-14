@@ -82,7 +82,11 @@ giveupButton.onclick = () => {
   const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
   const p = queryRow.querySelector('p')!;
   p.appendChild(
-    wrong`The opera you were looking for was ${targetOpera.title}, an ${targetOpera.language} opera by ${targetOpera.composer} that premiered in ${targetOpera.year}.`
+    wrong`The opera you were looking for was ${targetOpera.title}, ${
+      ['English', 'Italian'].includes(targetOpera.language) ? 'an' : 'a'
+    } ${targetOpera.language} opera by ${
+      targetOpera.composer
+    } that premiered in ${targetOpera.year}.`
   );
   querySlot.before(queryRow);
   disableGuessBtn();
