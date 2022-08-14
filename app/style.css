@@ -24,10 +24,43 @@ html, body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+.col-flex {
   display: flex;
   flex-direction: column;
   align-items: center;
   row-gap: 1rem;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto 1fr auto 1fr;
+    grid-template-areas:
+      "marginl top marginr"
+      "marginl guesses marginr"
+      "marginl hintcontrols marginr"
+      "marginl hints marginr";
+    row-gap: 1rem;
+}
+
+#top-area {
+  grid-area: top;
+}
+
+#query-area {
+  grid-area: guesses;
+  overflow-y: auto;
+}
+
+#hint-controls {
+  grid-area: hintcontrols;
+}
+
+#hint-area {
+  grid-area: hints;
+  overflow-y: auto;
 }
 
 #guess-controls {
@@ -70,20 +103,20 @@ body {
 }
 
 .query-row, #input-row, #composer-picture {
-  max-width: 35rem;
+  max-width: 36rem;
   border-top: 1px solid #ccc;
+  padding-top: 0.4rem;
 }
 
 #input-row {
   display: grid;
-  grid-template-columns: 10rem 20rem;
+  grid-template-columns: 1fr 2fr;
   column-gap: 10px;
-  width: max-content;
-  padding-top: 1em;
+  width: 100%;
 }
 #hint-row {
   display: grid;
-  grid-template-columns: 15rem 15rem;
+  grid-template-columns: 1fr 1fr;
   column-gap: 10px;
 }
 

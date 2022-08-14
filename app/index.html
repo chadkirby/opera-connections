@@ -8,31 +8,43 @@
     <title>Operadle</title>
     <script type="module" src="main.ts"></script>
   </head>
-  <body>
-    <h1>Welcome to Operadle!</h1>
+  <body class="main-grid">
+    <div id="top-area" class="col-flex">
+      <h1>Welcome to Operadle!</h1>
 
-    <div class="query-row">
-      <p id="guess-prompt">Guess today's opera</p>
+      <div class="query-row">
+        <p id="guess-prompt">Guess today's opera</p>
+      </div>
+
+      <div id="input-row" >
+        <input type="text" id="opera-input" placeholder="What's your guess?" autocomplete="off">
+        <button id="guess-button" disabled>My guess</button>
+      </div>
     </div>
 
-    <div id="input-row" >
-      <input type="text" id="opera-input" placeholder="What's your guess?">
-      <button id="guess-button" disabled>Guess</button>
+    <div id="query-area" class="col-flex">
+      <slot name="query-slot"></slot>
     </div>
 
-    <slot name="query-slot"></slot>
-
-    <div id="hint-row">
-      <button id="hint-button">Give me a hint</button>
-      <button id="giveup-button">I Give Up!</button>
+    <div id="hint-controls" class="col-flex">
+      <div id="hint-row">
+        <button id="hint-button">Give me a hint</button>
+        <button id="giveup-button">I Give Up!</button>
+      </div>
     </div>
 
-    <slot name="hint-slot"></slot>
-
-    <div id="composer-picture" class="hide">
-      <p>This is the composer of the opera you are looking for.</p>
+    <div id="hint-area" class="col-flex">
+        <slot name="hint-slot"></slot>
+      <div id="composer-picture" class="hide">
+        <p>This is the composer of the opera you are looking for.</p>
+      </div>
     </div>
 
+    <template id="hint-template">
+      <div class="query-row">
+        <p></p>
+      </div>
+    </template>
     <template id="query-template">
       <div class="query-row">
         <p></p>
