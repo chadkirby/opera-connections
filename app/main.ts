@@ -1,4 +1,5 @@
 import './style.css';
+import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
 import type { ListedOpera } from '../typings.js';
 
@@ -18,7 +19,9 @@ if (targetOpera.today) {
   guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
   guessPrompt.after(document.createElement('br'));
   guessPrompt.after(
-    document.createTextNode(new Date(targetOpera.today).toDateString())
+    document.createTextNode(
+      DateTime.fromISO(targetOpera.today).toLocaleString(DateTime.DATE_MED)
+    )
   );
 }
 
