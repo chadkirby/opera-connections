@@ -145,6 +145,10 @@ button {
   text-decoration:
   none;
   text-shadow:0px 1px 0px #ffffff;
+  height: 2em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 button:hover {
   background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
