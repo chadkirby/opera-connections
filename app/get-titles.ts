@@ -1,4 +1,4 @@
-import type { TargetOpera } from '../typings.js';
+import type { TargetOpera } from '@ckirby/opera-info';
 
 export function getTitles(opera: TargetOpera) {
   const { infobox } = opera;

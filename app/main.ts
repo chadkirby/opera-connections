@@ -1,7 +1,7 @@
 import './style.css';
 import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
-import type { ListedOpera } from '../typings.js';
+import type { ListedOpera, TargetOpera } from '@ckirby/opera-info';
 
 let operaUrl = '/.netlify/functions/today';
 const guessPrompt = document.getElementById('guess-prompt')!;
@@ -14,7 +14,7 @@ if (params.get('href') !== null) {
   operaUrl = `/.netlify/functions/wiki?${params}`;
 }
 const today = await fetch(operaUrl);
-const targetOpera = await today.json();
+const targetOpera = (await today.json()) as TargetOpera & { today?: string };
 if (targetOpera.today) {
   guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
   guessPrompt.after(document.createElement('br'));
@@ -42,7 +42,7 @@ const fuse = new Fuse(
   }
 );
 
-const hints = targetOpera.hints.slice();
+let hints = targetOpera.hints.slice();
 
 const img = document.createElement('img');
 img.src = `/.netlify/functions/image?url=${encodeURIComponent(
@@ -55,6 +55,7 @@ const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById(
   'guess-button'
 )! as HTMLButtonElement;
+const hintArea = document.getElementById('hint-area')! as HTMLDivElement;
 const hintButton = document.getElementById('hint-button')! as HTMLButtonElement;
 const giveupButton = document.getElementById(
   'giveup-button'
@@ -80,8 +81,9 @@ hintButton.onclick = () => {
   }
   const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
   const p = hintRow.querySelector('p')!;
-  p.textContent = hints.shift()!;
+  p.textContent = hints.shift()!.hint;
   hintSlot.after(hintRow);
+  hintArea.scrollTop = 0;
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
@@ -95,7 +97,7 @@ giveupButton.onclick = () => {
       ['English', 'Italian'].includes(targetOpera.language) ? 'an' : 'a'
     } ${targetOpera.language} opera by ${
       targetOpera.composer
-    } that premiered in ${targetOpera.year}.`
+    } that premiered in ${targetOpera.year.toString()}.`
   );
   querySlot.before(queryRow);
   disableGuessBtn();
@@ -138,6 +140,11 @@ async function doGuess() {
     p.appendChild(document.createElement('br'));
     if (guessedOpera.composerHref === targetOpera.composerHref) {
       composer.classList.add('correct-guess');
+      // remove all of the composer-category hints
+      hints = hints.filter((h) => h.category !== 'composer');
+      if (hints.length === 0) {
+        hintButton.disabled = true;
+      }
     } else {
       composer.classList.add('wrong-guess');
     }

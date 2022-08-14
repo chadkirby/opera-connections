@@ -1,6 +1,6 @@
 import re from '@ckirby/block-re';
 
-import type { TargetOpera } from '../typings.js';
+import type { TargetOpera } from '@ckirby/opera-info';
 import { getTitles } from './get-titles.js';
 
 export function anonymize(hint: string, opera: TargetOpera) {
