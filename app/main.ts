@@ -15,9 +15,11 @@ if (params.get('href') !== null) {
 const today = await fetch(operaUrl);
 const targetOpera = await today.json();
 if (targetOpera.today) {
-  guessPrompt.textContent = `Guess the opera of ${new Date(
-    targetOpera.today
-  ).toDateString()} by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
+  guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
+  guessPrompt.after(document.createElement('br'));
+  guessPrompt.after(
+    document.createTextNode(new Date(targetOpera.today).toDateString())
+  );
 }
 
 const operas = await fetch('/.netlify/functions/operas');
@@ -111,51 +113,44 @@ async function doGuess() {
   const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
 
   const p = queryRow.querySelector('p')!;
+  const composer = queryRow.querySelector('td.composer-feedback')!;
+  const date = queryRow.querySelector('td.date-feedback')!;
+  const language = queryRow.querySelector('td.language-feedback')!;
+  composer.textContent = guessedOpera.composer;
+  date.textContent = guessedOpera.year.toString();
+  language.textContent = guessedOpera.language;
   if (guessedOpera.titleHref === targetOpera.titleHref) {
+    p.querySelector('.correct')?.classList.toggle('hide', false);
+    p.querySelector('.incorrect')?.classList.toggle('hide', true);
     p.classList.add('correct');
     p.appendChild(
-      correct`🎉 ${guessedOpera.titles[0]} is the opera you are looking for.`
+      correct`${guessedOpera.titles[0]} is the opera you are looking for.`
     );
   } else {
+    p.querySelector('.correct')?.classList.toggle('hide', true);
+    p.querySelector('.incorrect')?.classList.toggle('hide', false);
     p.appendChild(
-      wrong`😢 ${guessedOpera.titles[0]} is not the opera you are looking for.`
+      wrong`${guessedOpera.titles[0]} is not the opera you are looking for.`
     );
     p.appendChild(document.createElement('br'));
-    const remarks = [];
     if (guessedOpera.composerHref === targetOpera.composerHref) {
-      if (guesses[1]?.composerHref !== targetOpera.composerHref) {
-        remarks.push(correct`was composed by ${targetOpera.composer}`);
-      }
+      composer.classList.add('correct-guess');
     } else {
-      remarks.push(wrong`was not composed by ${guessedOpera.composer}`);
+      composer.classList.add('wrong-guess');
     }
     if (guessedOpera.language === targetOpera.language) {
-      if (guesses[1]?.language !== targetOpera.language) {
-        remarks.push(correct`was in ${targetOpera.language}`);
-      }
+      language.classList.add('correct-guess');
     } else {
-      remarks.push(wrong`was not in ${guessedOpera.language}`);
+      language.classList.add('wrong-guess');
     }
     if (guessedOpera.year === targetOpera.year) {
-      if (guesses[1]?.year !== targetOpera.year) {
-        remarks.push(correct`did premiere in ${targetOpera.year}`);
-      }
+      date.classList.add('correct-guess');
     } else if (targetOpera.year < guessedOpera.year) {
-      remarks.push(wrong`premiered before ${guessedOpera.year.toString()}`);
+      date.classList.add('wrong-guess');
+      date.classList.add('too-late');
     } else {
-      remarks.push(wrong`premiered after ${guessedOpera.year.toString()}`);
-    }
-    p.appendChild(document.createTextNode('The opera you are looking for: '));
-    for (const [i, remark] of remarks.entries()) {
-      if (remarks.length > 1 && i === remarks.length - 1) {
-        p.appendChild(document.createTextNode('and '));
-      }
-      p.appendChild(remark);
-      if (i < remarks.length - 1) {
-        p.appendChild(document.createTextNode('; '));
-      } else {
-        p.appendChild(document.createTextNode('.'));
-      }
+      date.classList.add('wrong-guess');
+      date.classList.add('too-early');
     }
   }
 

@@ -79,6 +79,31 @@ body {
   margin-top: 1rem;
 }
 
+.feedback-table td {
+  text-align: center;
+}
+
+.feedback-table th {
+  font-weight: 100;
+  font-size: small;
+}
+
+.feedback-table td.wrong-guess::after {
+  content: ' ≠ 🎯';
+}
+.feedback-table td.too-early::after {
+  content: ' < 🎯';
+}
+.feedback-table td.too-late::after {
+  content: ' > 🎯';
+}
+
+.feedback-table td.correct-guess::before {
+  content: '✔︎ ';
+  font-size: larger;
+  color: rgb(39, 163, 39);
+}
+
 .wrong-guess {
   color: rgb(131, 47, 47);
 }

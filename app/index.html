@@ -45,9 +45,25 @@
         <p></p>
       </div>
     </template>
+
     <template id="query-template">
       <div class="query-row">
-        <p></p>
+        <p>
+          <img src="assets/sad-mozart.png" width="48" height="48" alt="Sad Composer" class="incorrect" />
+          <img src="assets/happy-mozart.png" width="48" height="48" alt="Happy Composer" class="correct hide" />
+        </p>
+        <table class="feedback-table">
+          <tr>
+            <th>Composer</th>
+            <th>Language</th>
+            <th>Date</th>
+          </tr>
+          <tr>
+            <td class="composer-feedback"></td>
+            <td class="language-feedback"></td>
+            <td class="date-feedback"></td>
+          </tr>
+        </table>
       </div>
     </template>
   </body>
