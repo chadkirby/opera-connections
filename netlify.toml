@@ -1,6 +1,6 @@
 [functions]
   # Flags "node-fetch" as an external node module for all functions.
-  external_node_modules = ["node-fetch", "@ckirby/opera-info"]
+  external_node_modules = ["node-fetch", "@ckirby/opera-info", "luxon"]
 
   included_files = ["utils/**"]
 

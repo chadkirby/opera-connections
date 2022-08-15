@@ -1,20 +1,29 @@
 import './style.css';
+import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
-import type { ListedOpera } from '../typings.js';
+import type { ListedOpera, TargetOpera } from '@ckirby/opera-info';
 
 let operaUrl = '/.netlify/functions/today';
+const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
-  document.getElementById('guess-prompt')!.textContent =
-    'Guess a random opera.';
+  guessPrompt.textContent = 'Guess a random opera.';
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
   operaUrl = `/.netlify/functions/wiki?${params}`;
 }
 const today = await fetch(operaUrl);
-const targetOpera = await today.json();
-console.log(targetOpera.title);
+const targetOpera = (await today.json()) as TargetOpera & { today?: string };
+if (targetOpera.today) {
+  guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
+  guessPrompt.after(document.createElement('br'));
+  guessPrompt.after(
+    document.createTextNode(
+      DateTime.fromISO(targetOpera.today).toLocaleString(DateTime.DATE_MED)
+    )
+  );
+}
 
 const operas = await fetch('/.netlify/functions/operas');
 const operaList = (await operas.json()) as ListedOpera[];
@@ -33,58 +42,71 @@ const fuse = new Fuse(
   }
 );
 
-const hints = targetOpera.hints.slice();
+let hints = targetOpera.hints.slice();
 
+const composerPicFragment = (document.getElementById(
+  'composer-template'
+) as HTMLTemplateElement)!.content.cloneNode(true) as DocumentFragment;
 const img = document.createElement('img');
 img.src = `/.netlify/functions/image?url=${encodeURIComponent(
   targetOpera.thumbnailUrl
 )}`;
-const composerPic = document.getElementById('composer-picture')!;
+const composerPic = composerPicFragment.getElementById('composer-picture')!;
 composerPic?.appendChild(img);
 
 const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById(
   'guess-button'
 )! as HTMLButtonElement;
+const feedbackArea = document.getElementById(
+  'feedback-area'
+)! as HTMLDivElement;
 const hintButton = document.getElementById('hint-button')! as HTMLButtonElement;
 const giveupButton = document.getElementById(
   'giveup-button'
 )! as HTMLButtonElement;
 const selectedOperaEl = guessButton; // document.getElementById("selected-opera")!;
-const queryTemplate = document.getElementById(
-  'query-template'
+const feedbackTemplate = document.getElementById(
+  'feedback-template'
 ) as HTMLTemplateElement;
-const querySlot = document.querySelector(
-  'slot[name="query-slot"]'
+const hintTemplate = document.getElementById(
+  'hint-template'
+) as HTMLTemplateElement;
+const feedbackSlot = document.querySelector(
+  'slot[name="feedback-slot"]'
 ) as HTMLSlotElement;
-const hintSlot = document.querySelector(
-  'slot[name="hint-slot"]'
-) as HTMLSlotElement;
-
-// focus the input element
-inputEl.focus();
 
 hintButton.onclick = () => {
-  if (composerPic.classList.contains('hide')) {
-    composerPic.classList.toggle('hide');
+  if (
+    !document.getElementById('composer-picture') &&
+    hints.some((h) => h.category === 'composer')
+  ) {
+    feedbackSlot.after(composerPicFragment);
     return;
   }
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
-  const p = queryRow.querySelector('p')!;
-  p.textContent = hints.shift()!;
-  hintSlot.after(queryRow);
+  const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
+  const p = hintRow.querySelector('p')!;
+  p.textContent = hints.shift()!.hint;
+  feedbackSlot.after(hintRow);
+  feedbackArea.scrollTop = 0;
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
 };
 
 giveupButton.onclick = () => {
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
-  const p = queryRow.querySelector('p')!;
+  const feedbackRow = feedbackTemplate.content.cloneNode(
+    true
+  ) as DocumentFragment;
+  const p = feedbackRow.querySelector('p')!;
   p.appendChild(
-    wrong`The opera you were looking for was ${targetOpera.title}, an ${targetOpera.language} opera by ${targetOpera.composer} that premiered in ${targetOpera.year}.`
+    wrong`The opera you were looking for was ${targetOpera.title}, ${
+      ['English', 'Italian'].includes(targetOpera.language) ? 'an' : 'a'
+    } ${targetOpera.language} opera by ${
+      targetOpera.composer
+    } that premiered in ${targetOpera.year.toString()}.`
   );
-  querySlot.before(queryRow);
+  feedbackSlot.after(feedbackRow);
   disableGuessBtn();
   hintButton.setAttribute('disabled', 'disabled');
   giveupButton.setAttribute('disabled', 'disabled');
@@ -100,58 +122,60 @@ async function doGuess() {
 
   guesses.unshift(guessedOpera);
 
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
+  const feedbackRow = feedbackTemplate.content.cloneNode(
+    true
+  ) as DocumentFragment;
 
-  const p = queryRow.querySelector('p')!;
-  if (guessedOpera.titleHref === targetOpera.titleHref) {
-    p.classList.add('correct');
-    p.appendChild(
-      correct`🎉 ${guessedOpera.titles[0]} is the opera you are looking for.`
-    );
+  const p = feedbackRow.querySelector('p')!;
+  const composer = feedbackRow.querySelector('td.composer-feedback')!;
+  const date = feedbackRow.querySelector('td.date-feedback')!;
+  const language = feedbackRow.querySelector('td.language-feedback')!;
+  composer.textContent = guessedOpera.composer;
+  date.textContent = guessedOpera.year.toString();
+  language.textContent = guessedOpera.language;
+  if (guessedOpera.composerHref === targetOpera.composerHref) {
+    composer.classList.add('correct-guess');
+    // remove all of the composer-category hints
+    hints = hints.filter((h) => h.category !== 'composer');
+    if (hints.length === 0) {
+      hintButton.disabled = true;
+    }
   } else {
-    p.appendChild(
-      wrong`😢 ${guessedOpera.titles[0]} is not the opera you are looking for.`
-    );
-    p.appendChild(document.createElement('br'));
-    const remarks = [];
-    if (guessedOpera.composerHref === targetOpera.composerHref) {
-      if (guesses[1]?.composerHref !== targetOpera.composerHref) {
-        remarks.push(correct`was composed by ${targetOpera.composer}`);
-      }
-    } else {
-      remarks.push(wrong`was not composed by ${guessedOpera.composer}`);
-    }
-    if (guessedOpera.language === targetOpera.language) {
-      if (guesses[1]?.language !== targetOpera.language) {
-        remarks.push(correct`was in ${targetOpera.language}`);
-      }
-    } else {
-      remarks.push(wrong`was not in ${guessedOpera.language}`);
-    }
-    if (guessedOpera.year === targetOpera.year) {
-      if (guesses[1]?.year !== targetOpera.year) {
-        remarks.push(correct`did premiere in ${targetOpera.year}`);
-      }
-    } else if (targetOpera.year < guessedOpera.year) {
-      remarks.push(wrong`premiered before ${guessedOpera.year.toString()}`);
-    } else {
-      remarks.push(wrong`premiered after ${guessedOpera.year.toString()}`);
-    }
-    p.appendChild(document.createTextNode('The opera you are looking for: '));
-    for (const [i, remark] of remarks.entries()) {
-      if (remarks.length > 1 && i === remarks.length - 1) {
-        p.appendChild(document.createTextNode('and '));
-      }
-      p.appendChild(remark);
-      if (i < remarks.length - 1) {
-        p.appendChild(document.createTextNode('; '));
-      } else {
-        p.appendChild(document.createTextNode('.'));
-      }
-    }
+    composer.classList.add('wrong-guess');
+  }
+  if (guessedOpera.language === targetOpera.language) {
+    language.classList.add('correct-guess');
+  } else {
+    language.classList.add('wrong-guess');
+  }
+  if (guessedOpera.year === targetOpera.year) {
+    date.classList.add('correct-guess');
+  } else if (targetOpera.year < guessedOpera.year) {
+    date.classList.add('wrong-guess');
+    date.classList.add('too-late');
+  } else {
+    date.classList.add('wrong-guess');
+    date.classList.add('too-early');
   }
 
-  querySlot.after(queryRow);
+  if (guessedOpera.titleHref === targetOpera.titleHref) {
+    feedbackRow.querySelector('img.correct')!.classList.remove('hide');
+    p.querySelector('.correct')?.classList.toggle('hide', false);
+    p.querySelector('.incorrect')?.classList.toggle('hide', true);
+    p.classList.add('correct');
+    p.appendChild(
+      correct`${guessedOpera.titles[0]} is the opera you are looking for.`
+    );
+  } else {
+    feedbackRow.querySelector('img.incorrect')!.classList.remove('hide');
+    p.querySelector('.correct')?.classList.toggle('hide', true);
+    p.querySelector('.incorrect')?.classList.toggle('hide', false);
+    p.appendChild(
+      wrong`${guessedOpera.titles[0]} is not the opera you are looking for.`
+    );
+  }
+
+  feedbackSlot.after(feedbackRow);
 
   inputEl.value = '';
   fuse.removeAt(Number(selectedOperaEl.dataset.refIndex)!);
@@ -198,7 +222,7 @@ inputEl.oninput = () => {
 };
 
 function disableGuessBtn() {
-  selectedOperaEl.textContent = 'Unknown opera';
+  selectedOperaEl.textContent = 'My guess';
   delete selectedOperaEl.dataset.refIndex;
   guessButton.setAttribute('disabled', 'disabled');
 }
@@ -261,3 +285,6 @@ function getSpan(literals: TemplateStringsArray, ...values: string[]) {
   }
   return span;
 }
+
+// focus the input element
+inputEl.focus();

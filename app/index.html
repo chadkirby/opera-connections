@@ -8,34 +8,74 @@
     <title>Operadle</title>
     <script type="module" src="main.ts"></script>
   </head>
-  <body>
-    <h1>Welcome to Operadle!</h1>
+  <body class="main-grid">
+    <div id="top-area" class="flex flex-gap">
+      <h1>Welcome to Operadle!</h1>
 
-    <div class="query-row">
-      <p id="guess-prompt">Guess today's opera</p>
+      <div class="flex flex-gap">
+        <p id="guess-prompt">Guess today's opera</p>
+      </div>
+
+      <div id="input-row" >
+        <input type="text" id="opera-input" placeholder="What's your guess?" autocomplete="off">
+        <button id="guess-button" disabled>My guess</button>
+      </div>
     </div>
 
-    <div id="input-row" >
-      <input type="text" id="opera-input" placeholder="What's your guess?">
-      <button id="guess-button" disabled>Guess</button>
+    <div id="feedback-area" class="flex flex-gap">
+      <slot name="feedback-slot"></slot>
     </div>
 
-    <slot name="query-slot"></slot>
-
-    <div id="hint-row">
-      <button id="hint-button">Give me a hint</button>
-      <button id="giveup-button">I Give Up!</button>
+    <div id="hint-controls" class="flex flex-gap">
+      <div id="hint-row">
+        <button id="hint-button">Give me a hint</button>
+        <button id="giveup-button">I Give Up!</button>
+      </div>
     </div>
 
-    <slot name="hint-slot"></slot>
+    <template id="composer-template">
+      <div class="feedback-row">
+        <div>
+          <img src="assets/hint.png" width="32" height="32" />
+        </div>
+        <div id="composer-picture" hint>
+          <p>This is the composer of the opera you are looking for.</p>
+        </div>
+      </div>
+    </template>
 
-    <div id="composer-picture" class="hide">
-      <p>This is the composer of the opera you are looking for.</p>
-    </div>
+    <template id="hint-template">
+      <div class="feedback-row">
+        <div>
+          <img src="assets/hint.png" width="32" height="32" />
+        </div>
+        <div hint>
+          <p></p>
+        </div>
+      </div>
+    </template>
 
-    <template id="query-template">
-      <div class="query-row">
-        <p></p>
+    <template id="feedback-template">
+      <div class="feedback-row">
+        <div>
+          <img src="assets/sad-mozart.png" width="48" height="48" alt="Sad Composer" class="incorrect hide" />
+          <img src="assets/happy-mozart.png" width="48" height="48" alt="Happy Composer" class="correct hide" />
+        </div>
+        <div class="flex">
+          <p></p>
+          <table class="feedback-table">
+            <tr>
+              <th>Composer</th>
+              <th>Language</th>
+              <th>Date</th>
+            </tr>
+            <tr>
+              <td class="composer-feedback"></td>
+              <td class="language-feedback"></td>
+              <td class="date-feedback"></td>
+            </tr>
+          </table>
+          </div>
       </div>
     </template>
   </body>
