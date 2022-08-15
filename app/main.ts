@@ -44,54 +44,61 @@ const fuse = new Fuse(
 
 let hints = targetOpera.hints.slice();
 
+const composerPicFragment = (document.getElementById(
+  'composer-template'
+) as HTMLTemplateElement)!.content.cloneNode(true) as DocumentFragment;
 const img = document.createElement('img');
 img.src = `/.netlify/functions/image?url=${encodeURIComponent(
   targetOpera.thumbnailUrl
 )}`;
-const composerPic = document.getElementById('composer-picture')!;
+const composerPic = composerPicFragment.getElementById('composer-picture')!;
 composerPic?.appendChild(img);
 
 const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById(
   'guess-button'
 )! as HTMLButtonElement;
-const hintArea = document.getElementById('hint-area')! as HTMLDivElement;
+const feedbackArea = document.getElementById(
+  'feedback-area'
+)! as HTMLDivElement;
 const hintButton = document.getElementById('hint-button')! as HTMLButtonElement;
 const giveupButton = document.getElementById(
   'giveup-button'
 )! as HTMLButtonElement;
 const selectedOperaEl = guessButton; // document.getElementById("selected-opera")!;
-const queryTemplate = document.getElementById(
-  'query-template'
+const feedbackTemplate = document.getElementById(
+  'feedback-template'
 ) as HTMLTemplateElement;
 const hintTemplate = document.getElementById(
   'hint-template'
 ) as HTMLTemplateElement;
-const querySlot = document.querySelector(
-  'slot[name="query-slot"]'
-) as HTMLSlotElement;
-const hintSlot = document.querySelector(
-  'slot[name="hint-slot"]'
+const feedbackSlot = document.querySelector(
+  'slot[name="feedback-slot"]'
 ) as HTMLSlotElement;
 
 hintButton.onclick = () => {
-  if (composerPic.classList.contains('hide')) {
-    composerPic.classList.toggle('hide');
+  if (
+    !document.getElementById('composer-picture') &&
+    hints.some((h) => h.category === 'composer')
+  ) {
+    feedbackSlot.after(composerPicFragment);
     return;
   }
   const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
   const p = hintRow.querySelector('p')!;
   p.textContent = hints.shift()!.hint;
-  hintSlot.after(hintRow);
-  hintArea.scrollTop = 0;
+  feedbackSlot.after(hintRow);
+  feedbackArea.scrollTop = 0;
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
 };
 
 giveupButton.onclick = () => {
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
-  const p = queryRow.querySelector('p')!;
+  const feedbackRow = feedbackTemplate.content.cloneNode(
+    true
+  ) as DocumentFragment;
+  const p = feedbackRow.querySelector('p')!;
   p.appendChild(
     wrong`The opera you were looking for was ${targetOpera.title}, ${
       ['English', 'Italian'].includes(targetOpera.language) ? 'an' : 'a'
@@ -99,7 +106,7 @@ giveupButton.onclick = () => {
       targetOpera.composer
     } that premiered in ${targetOpera.year.toString()}.`
   );
-  querySlot.before(queryRow);
+  feedbackSlot.after(feedbackRow);
   disableGuessBtn();
   hintButton.setAttribute('disabled', 'disabled');
   giveupButton.setAttribute('disabled', 'disabled');
@@ -115,16 +122,44 @@ async function doGuess() {
 
   guesses.unshift(guessedOpera);
 
-  const queryRow = queryTemplate.content.cloneNode(true) as DocumentFragment;
+  const feedbackRow = feedbackTemplate.content.cloneNode(
+    true
+  ) as DocumentFragment;
 
-  const p = queryRow.querySelector('p')!;
-  const composer = queryRow.querySelector('td.composer-feedback')!;
-  const date = queryRow.querySelector('td.date-feedback')!;
-  const language = queryRow.querySelector('td.language-feedback')!;
+  const p = feedbackRow.querySelector('p')!;
+  const composer = feedbackRow.querySelector('td.composer-feedback')!;
+  const date = feedbackRow.querySelector('td.date-feedback')!;
+  const language = feedbackRow.querySelector('td.language-feedback')!;
   composer.textContent = guessedOpera.composer;
   date.textContent = guessedOpera.year.toString();
   language.textContent = guessedOpera.language;
+  if (guessedOpera.composerHref === targetOpera.composerHref) {
+    composer.classList.add('correct-guess');
+    // remove all of the composer-category hints
+    hints = hints.filter((h) => h.category !== 'composer');
+    if (hints.length === 0) {
+      hintButton.disabled = true;
+    }
+  } else {
+    composer.classList.add('wrong-guess');
+  }
+  if (guessedOpera.language === targetOpera.language) {
+    language.classList.add('correct-guess');
+  } else {
+    language.classList.add('wrong-guess');
+  }
+  if (guessedOpera.year === targetOpera.year) {
+    date.classList.add('correct-guess');
+  } else if (targetOpera.year < guessedOpera.year) {
+    date.classList.add('wrong-guess');
+    date.classList.add('too-late');
+  } else {
+    date.classList.add('wrong-guess');
+    date.classList.add('too-early');
+  }
+
   if (guessedOpera.titleHref === targetOpera.titleHref) {
+    feedbackRow.querySelector('img.correct')!.classList.remove('hide');
     p.querySelector('.correct')?.classList.toggle('hide', false);
     p.querySelector('.incorrect')?.classList.toggle('hide', true);
     p.classList.add('correct');
@@ -132,39 +167,15 @@ async function doGuess() {
       correct`${guessedOpera.titles[0]} is the opera you are looking for.`
     );
   } else {
+    feedbackRow.querySelector('img.incorrect')!.classList.remove('hide');
     p.querySelector('.correct')?.classList.toggle('hide', true);
     p.querySelector('.incorrect')?.classList.toggle('hide', false);
     p.appendChild(
       wrong`${guessedOpera.titles[0]} is not the opera you are looking for.`
     );
-    p.appendChild(document.createElement('br'));
-    if (guessedOpera.composerHref === targetOpera.composerHref) {
-      composer.classList.add('correct-guess');
-      // remove all of the composer-category hints
-      hints = hints.filter((h) => h.category !== 'composer');
-      if (hints.length === 0) {
-        hintButton.disabled = true;
-      }
-    } else {
-      composer.classList.add('wrong-guess');
-    }
-    if (guessedOpera.language === targetOpera.language) {
-      language.classList.add('correct-guess');
-    } else {
-      language.classList.add('wrong-guess');
-    }
-    if (guessedOpera.year === targetOpera.year) {
-      date.classList.add('correct-guess');
-    } else if (targetOpera.year < guessedOpera.year) {
-      date.classList.add('wrong-guess');
-      date.classList.add('too-late');
-    } else {
-      date.classList.add('wrong-guess');
-      date.classList.add('too-early');
-    }
   }
 
-  querySlot.after(queryRow);
+  feedbackSlot.after(feedbackRow);
 
   inputEl.value = '';
   fuse.removeAt(Number(selectedOperaEl.dataset.refIndex)!);
