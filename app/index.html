@@ -4,32 +4,35 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,height=device-height" >
     <title>Operadle</title>
     <script type="module" src="main.ts"></script>
+
   </head>
-  <body class="main-grid">
-    <div id="top-area" class="flex flex-gap">
-      <h1>Welcome to Operadle!</h1>
-
-      <div class="flex flex-gap">
-        <p id="guess-prompt">Guess today's opera</p>
+  <body>
+    <div id="app">
+      <div id="top-area" class="flex flex-gap">
+        <h1 id="welcome">Welcome to Operadle!</h1>
       </div>
 
-      <div id="input-row" >
-        <input type="text" id="opera-input" placeholder="What's your guess?" autocomplete="off">
-        <button id="guess-button" disabled>My guess</button>
+      <div id="feedback-area" class="flex flex-gap">
+        <slot name="feedback-slot"></slot>
       </div>
-    </div>
 
-    <div id="feedback-area" class="flex flex-gap">
-      <slot name="feedback-slot"></slot>
-    </div>
+      <div id="hint-controls" class="flex flex-gap">
+        <div class="flex flex-gap">
+          <p id="guess-prompt">Guess today's opera</p>
+        </div>
 
-    <div id="hint-controls" class="flex flex-gap">
-      <div id="hint-row">
-        <button id="hint-button">Give me a hint</button>
-        <button id="giveup-button">I Give Up!</button>
+        <div id="input-row" >
+          <input type="text" id="opera-input" placeholder="What's your guess?" autocomplete="off">
+          <button id="guess-button" disabled>My guess</button>
+        </div>
+
+        <div id="hint-row">
+          <button id="hint-button">Give me a hint</button>
+          <button id="giveup-button">I Give Up!</button>
+        </div>
       </div>
     </div>
 

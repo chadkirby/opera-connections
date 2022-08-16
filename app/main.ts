@@ -8,6 +8,22 @@ const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
   guessPrompt.textContent = 'Guess a random opera.';
+} else {
+  // mobile safari will silently re-use an old response unless we update
+  // the URL, so add a dummy query param
+  // set today to midnight of the current day (west-coast time)
+  const today = DateTime.fromObject(
+    {
+      hour: 0,
+      minute: 0,
+      second: 0,
+    },
+    {
+      zone: 'America/Los_Angeles',
+    }
+  );
+
+  operaUrl += `?today=${today.toMillis()}`;
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
@@ -17,12 +33,11 @@ const today = await fetch(operaUrl);
 const targetOpera = (await today.json()) as TargetOpera & { today?: string };
 if (targetOpera.today) {
   guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
-  guessPrompt.after(document.createElement('br'));
-  guessPrompt.after(
-    document.createTextNode(
-      DateTime.fromISO(targetOpera.today).toLocaleString(DateTime.DATE_MED)
-    )
-  );
+  document.getElementById(
+    'welcome'
+  )!.textContent = `Operadle for ${DateTime.fromISO(
+    targetOpera.today
+  ).toLocaleString(DateTime.DATE_MED)}`;
 }
 
 const operas = await fetch('/.netlify/functions/operas');
