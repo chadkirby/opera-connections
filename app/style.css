@@ -24,6 +24,8 @@ html, body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
 }
 
 .flex {
@@ -35,19 +37,24 @@ body {
   row-gap: 1rem;
 }
 
-.main-grid {
+#app {
     display: grid;
-    grid-template-columns: 1fr max(35rem) 1fr;
+    grid-template-columns: minmax(auto, 35rem);
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
-      "marginl top marginr"
-      "marginl guesses marginr"
-      "marginl hintcontrols marginr";
+      "top"
+      "guesses"
+      "hintcontrols";
     row-gap: 1rem;
+    margin: 0rem 1rem;
 }
 
 #top-area {
   grid-area: top;
+  text-align: center;
+}
+#top-area h1 {
+  font-size: 1.5rem;
 }
 
 #feedback-area {
@@ -58,7 +65,7 @@ body {
 
 #hint-controls {
   grid-area: hintcontrols;
-  margin-bottom: 1rem;
+  margin: 1rem 1rem;
 }
 
 #guess-controls {
@@ -131,17 +138,22 @@ body {
   padding-top: 1rem;
 }
 
-#input-row {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+#input-row, #hint-row {
+  display: flex;
+  flex-flow: row wrap;
   column-gap: 10px;
+  row-gap: 8px;
   width: 100%;
+  justify-content: center;
 }
-#hint-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 10px;
+
+#input-row > input {
+  width: 18ch;
 }
+#input-row > button {
+  width: 32ch;
+}
+
 
 #composer-picture {
   display: grid;
