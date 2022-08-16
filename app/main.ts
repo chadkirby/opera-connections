@@ -8,6 +8,22 @@ const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
   guessPrompt.textContent = 'Guess a random opera.';
+} else {
+  // mobile safari will silently re-use an old response unless we update
+  // the URL, so add a dummy query param
+  // set today to midnight of the current day (west-coast time)
+  const today = DateTime.fromObject(
+    {
+      hour: 0,
+      minute: 0,
+      second: 0,
+    },
+    {
+      zone: 'America/Los_Angeles',
+    }
+  );
+
+  operaUrl += `?today=${today.toMillis()}`;
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
