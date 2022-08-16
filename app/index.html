@@ -10,8 +10,14 @@
   </head>
   <body class="main-grid">
     <div id="top-area" class="flex flex-gap">
-      <h1>Welcome to Operadle!</h1>
+      <h1 id="welcome">Welcome to Operadle!</h1>
+    </div>
 
+    <div id="feedback-area" class="flex flex-gap">
+      <slot name="feedback-slot"></slot>
+    </div>
+
+    <div id="hint-controls" class="flex flex-gap">
       <div class="flex flex-gap">
         <p id="guess-prompt">Guess today's opera</p>
       </div>
@@ -20,13 +26,7 @@
         <input type="text" id="opera-input" placeholder="What's your guess?" autocomplete="off">
         <button id="guess-button" disabled>My guess</button>
       </div>
-    </div>
 
-    <div id="feedback-area" class="flex flex-gap">
-      <slot name="feedback-slot"></slot>
-    </div>
-
-    <div id="hint-controls" class="flex flex-gap">
       <div id="hint-row">
         <button id="hint-button">Give me a hint</button>
         <button id="giveup-button">I Give Up!</button>

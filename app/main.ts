@@ -33,12 +33,11 @@ const today = await fetch(operaUrl);
 const targetOpera = (await today.json()) as TargetOpera & { today?: string };
 if (targetOpera.today) {
   guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
-  guessPrompt.after(document.createElement('br'));
-  guessPrompt.after(
-    document.createTextNode(
-      DateTime.fromISO(targetOpera.today).toLocaleString(DateTime.DATE_MED)
-    )
-  );
+  document.getElementById(
+    'welcome'
+  )!.textContent = `Operadle for ${DateTime.fromISO(
+    targetOpera.today
+  ).toLocaleString(DateTime.DATE_MED)}`;
 }
 
 const operas = await fetch('/.netlify/functions/operas');
