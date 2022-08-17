@@ -40,7 +40,7 @@
     "node-fetch": "^3.2.10",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4",
-    "vite": "^3.0.6"
+    "vite": "^3.0.8"
   },
   "dependencies": {
     "@ckirby/block-re": "^3.0.1",
