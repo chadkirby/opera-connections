@@ -94,17 +94,15 @@ body {
   font-size: small;
 }
 
-.feedback-table td.wrong-guess::after {
-  content: ' ≠ 🎯';
+.feedback-table td.wrong-guess::before {
+  content: '❌ ';
+  font-size: small;
 }
 .feedback-table td.too-early::after {
-  content: ' < 🎯';
-}
-.feedback-table td.too-late::before {
-  content: '🎯 < ';
+  content: ' (too early)';
 }
 .feedback-table td.too-late::after {
-  content: none;
+  content: ' (too late)';
 }
 
 .feedback-table td.correct-guess::before {
