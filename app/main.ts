@@ -108,14 +108,13 @@ hintButton.onclick = () => {
     !document.getElementById('composer-picture') &&
     hints.some((h) => h.category === 'composer')
   ) {
-    feedbackSlot.after(composerPicFragment);
+    insertAndScroll(composerPicFragment);
     return;
   }
   const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
   const p = hintRow.querySelector('p')!;
   p.textContent = hints.shift()!.hint;
-  feedbackSlot.after(hintRow);
-  feedbackArea.scrollTop = 0;
+  insertAndScroll(hintRow);
   if (hints.length === 0) {
     hintButton.disabled = true;
   }
@@ -133,12 +132,17 @@ giveupButton.onclick = () => {
       targetOpera.composer
     } that premiered in ${targetOpera.year.toString()}.`
   );
-  feedbackSlot.after(feedbackRow);
+  insertAndScroll(feedbackRow);
   disableGuessBtn();
   hintButton.setAttribute('disabled', 'disabled');
   giveupButton.setAttribute('disabled', 'disabled');
   inputEl.setAttribute('disabled', 'disabled');
 };
+
+function insertAndScroll(newRow: DocumentFragment | Element) {
+  feedbackSlot.after(newRow);
+  feedbackSlot.nextElementSibling!.scrollIntoView({ behavior: 'smooth' });
+}
 
 async function doGuess() {
   if (!('listIndex' in selectedOperaEl.dataset)) return;
@@ -202,7 +206,7 @@ async function doGuess() {
     );
   }
 
-  feedbackSlot.after(feedbackRow);
+  insertAndScroll(feedbackRow);
 
   inputEl.value = '';
   fuse.removeAt(Number(selectedOperaEl.dataset.refIndex)!);
