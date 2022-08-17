@@ -3,6 +3,17 @@ import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
 import type { ListedOpera, TargetOpera } from '@ckirby/opera-info';
 
+const today = DateTime.fromObject(
+  {
+    hour: 0,
+    minute: 0,
+    second: 0,
+  },
+  {
+    zone: 'America/Los_Angeles',
+  }
+);
+
 let operaUrl = '/.netlify/functions/today';
 const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
@@ -12,16 +23,6 @@ if (window.location.href.endsWith('random')) {
   // mobile safari will silently re-use an old response unless we update
   // the URL, so add a dummy query param
   // set today to midnight of the current day (west-coast time)
-  const today = DateTime.fromObject(
-    {
-      hour: 0,
-      minute: 0,
-      second: 0,
-    },
-    {
-      zone: 'America/Los_Angeles',
-    }
-  );
 
   operaUrl += `?today=${today.toMillis()}`;
 }
@@ -29,8 +30,8 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
   operaUrl = `/.netlify/functions/wiki?${params}`;
 }
-const today = await fetch(operaUrl);
-const targetOpera = (await today.json()) as TargetOpera & { today?: string };
+const response = await fetch(operaUrl);
+const targetOpera = (await response.json()) as TargetOpera & { today?: string };
 if (targetOpera.today) {
   guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
   document.getElementById(
@@ -91,7 +92,18 @@ const feedbackSlot = document.querySelector(
   'slot[name="feedback-slot"]'
 ) as HTMLSlotElement;
 
+const history: { guess?: string; hint?: true }[] = [];
+
 hintButton.onclick = () => {
+  history.unshift({ hint: true });
+  localStorage.setItem(
+    `play-${today.toISO()}`,
+    JSON.stringify({
+      target: targetOpera.titleHref,
+      history,
+    } as LocalGame)
+  );
+
   if (
     !document.getElementById('composer-picture') &&
     hints.some((h) => h.category === 'composer')
@@ -128,14 +140,12 @@ giveupButton.onclick = () => {
   inputEl.setAttribute('disabled', 'disabled');
 };
 
-const guesses: ListedOpera[] = [];
-
 async function doGuess() {
   if (!('listIndex' in selectedOperaEl.dataset)) return;
 
   const guessedOpera = operaList[parseInt(selectedOperaEl.dataset.listIndex!)];
 
-  guesses.unshift(guessedOpera);
+  history.unshift({ guess: guessedOpera.titleHref });
 
   const feedbackRow = feedbackTemplate.content.cloneNode(
     true
@@ -181,6 +191,8 @@ async function doGuess() {
     p.appendChild(
       correct`${guessedOpera.titles[0]} is the opera you are looking for.`
     );
+    showStats();
+    inputEl.setAttribute('disabled', 'disabled');
   } else {
     feedbackRow.querySelector('img.incorrect')!.classList.remove('hide');
     p.querySelector('.correct')?.classList.toggle('hide', true);
@@ -195,6 +207,14 @@ async function doGuess() {
   inputEl.value = '';
   fuse.removeAt(Number(selectedOperaEl.dataset.refIndex)!);
   disableGuessBtn();
+
+  localStorage.setItem(
+    `play-${today.toISO()}`,
+    JSON.stringify({
+      target: targetOpera.titleHref,
+      history,
+    } as LocalGame)
+  );
 }
 guessButton.onclick = doGuess;
 
@@ -235,6 +255,76 @@ inputEl.oninput = () => {
     disableGuessBtn();
   }
 };
+
+interface LocalGame {
+  target: string;
+  history: typeof history;
+}
+
+function showStats() {
+  document.getElementById('modal-overlay')!.classList.remove('hide');
+  document.getElementById('stats-modal')!.classList.remove('hide');
+  const localStorageKeys = Object.keys(localStorage);
+  const gameKeys = localStorageKeys.filter((key) => key.startsWith('play-'));
+  const playCount = gameKeys.length;
+  const games = gameKeys.map(
+    (key) => JSON.parse(localStorage.getItem(key)!) as LocalGame
+  );
+  let correctCount = 0;
+  let hintsPerGame = 0;
+  let guessesPerGame = 0;
+  for (const game of games) {
+    if (game.history[0].guess === game.target) {
+      correctCount++;
+    }
+    const guessCount = game.history.filter((h) => h.guess).length;
+    guessesPerGame += guessCount / playCount;
+    const hintCount = game.history.filter((h) => h.hint).length;
+    hintsPerGame += hintCount / playCount;
+  }
+  document.getElementById('played-count')!.textContent = playCount.toString();
+  document.getElementById('win-pct')!.textContent = `${(
+    (100 * correctCount) /
+    playCount
+  ).toFixed(0)}%`;
+  document.getElementById(
+    'hints-per-game'
+  )!.textContent = `${hintsPerGame.toFixed(1)}`;
+  document.getElementById(
+    'guesses-per-game'
+  )!.textContent = `${guessesPerGame.toFixed(1)}`;
+
+  const sharable = history
+    .map((h) => {
+      if (h.hint) return 'ᴴᴵᴺᵀ';
+      const guessed = operaList.find((o) => o.titleHref === h.guess)!;
+      const disp = [
+        guessed.composerHref === targetOpera.composerHref ? '✓' : 'ˣ',
+        guessed.language === targetOpera.language ? '✓' : 'ˣ',
+      ];
+      if (guessed.year === targetOpera.year) disp.push('✓');
+      if (guessed.year < targetOpera.year) disp.push('❮');
+      if (guessed.year > targetOpera.year) disp.push('❯');
+      return disp.join('');
+    })
+    .reverse()
+    .join('\n');
+  // ⓧⓧ❮
+  // ⓧⓧ❮
+  // ᴴᴵᴺᵀ
+  // ⓧⓧ❮
+  // ✓✓✓
+  console.log(sharable);
+}
+
+document.getElementById('stats-close-button')!.onclick = hideStats;
+document.getElementById('modal-overlay')!.onclick = hideStats;
+document.getElementById('show-stats-button')!.onclick = showStats;
+
+function hideStats() {
+  document.getElementById('modal-overlay')!.classList.add('hide');
+  document.getElementById('stats-modal')!.classList.add('hide');
+}
 
 function disableGuessBtn() {
   selectedOperaEl.textContent = 'My guess';
