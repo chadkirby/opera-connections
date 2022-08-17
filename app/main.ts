@@ -329,6 +329,7 @@ function hideStats() {
 function disableGuessBtn() {
   selectedOperaEl.textContent = 'My guess';
   delete selectedOperaEl.dataset.refIndex;
+  delete selectedOperaEl.dataset.listIndex;
   guessButton.setAttribute('disabled', 'disabled');
 }
 
