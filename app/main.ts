@@ -74,9 +74,6 @@ const inputEl = document.getElementById('opera-input') as HTMLInputElement;
 const guessButton = document.getElementById(
   'guess-button'
 )! as HTMLButtonElement;
-const feedbackArea = document.getElementById(
-  'feedback-area'
-)! as HTMLDivElement;
 const hintButton = document.getElementById('hint-button')! as HTMLButtonElement;
 const giveupButton = document.getElementById(
   'giveup-button'
