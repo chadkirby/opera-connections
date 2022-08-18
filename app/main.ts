@@ -1,6 +1,7 @@
 import './style.css';
 import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
+import domtoimage from 'dom-to-image';
 import type { ListedOpera, TargetOpera } from '@ckirby/opera-info';
 
 const today = DateTime.fromObject(
@@ -109,6 +110,7 @@ hintButton.onclick = () => {
     return;
   }
   const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
+  hintRow.querySelector('.feedback-row')?.classList.add('hint');
   const p = hintRow.querySelector('p')!;
   p.textContent = hints.shift()!.hint;
   insertAndScroll(hintRow);
@@ -262,7 +264,8 @@ interface LocalGame {
   history: typeof history;
 }
 
-function showStats() {
+async function showStats() {
+  document.getElementById('history-table')?.remove();
   document.getElementById('modal-overlay')!.classList.remove('hide');
   document.getElementById('stats-modal')!.classList.remove('hide');
   const localStorageKeys = Object.keys(localStorage);
@@ -295,34 +298,83 @@ function showStats() {
     'guesses-per-game'
   )!.textContent = `${guessesPerGame.toFixed(1)}`;
 
-  const sharable = history
-    .map((h) => {
-      if (h.hint) return 'ᴴᴵᴺᵀ';
-      const guessed = operaList.find((o) => o.titleHref === h.guess)!;
-      const disp = [
-        guessed.composerHref === targetOpera.composerHref ? '✓' : 'ˣ',
-        guessed.language === targetOpera.language ? '✓' : 'ˣ',
-      ];
-      if (guessed.year === targetOpera.year) disp.push('✓');
-      if (guessed.year < targetOpera.year) disp.push('❮');
-      if (guessed.year > targetOpera.year) disp.push('❯');
-      return disp.join('');
-    })
-    .reverse()
-    .join('\n');
-  // ⓧⓧ❮
-  // ⓧⓧ❮
-  // ᴴᴵᴺᵀ
-  // ⓧⓧ❮
-  // ✓✓✓
-  console.log(sharable);
+  const sharable = (
+    document.getElementById('share-template')! as HTMLTemplateElement
+  ).content.cloneNode(true) as DocumentFragment;
+  const table = sharable.querySelector('table')!;
+  table.querySelector('#history-welcome')!.textContent =
+    document.getElementById('welcome')!.textContent;
+  const headerRow = sharable.getElementById('history-header')!;
+
+  for (const h of history) {
+    if (h.hint) {
+      const hintRow = (
+        document.getElementById('share-hint-row')! as HTMLTemplateElement
+      ).content.cloneNode(true) as DocumentFragment;
+      headerRow.after(hintRow);
+      continue;
+    }
+    const guessed = operaList.find((o) => o.titleHref === h.guess)!;
+    const row = (
+      document.getElementById('share-guess-row')! as HTMLTemplateElement
+    ).content.cloneNode(true) as DocumentFragment;
+    row.querySelector('td:nth-child(1)')!.textContent =
+      guessed.composerHref === targetOpera.composerHref ? '🟢' : '🔴';
+    row.querySelector('td:nth-child(2)')!.textContent =
+      guessed.language === targetOpera.language ? '🟢' : '🔴';
+    row.querySelector('td:nth-child(3)')!.textContent =
+      guessed.year === targetOpera.year
+        ? '🟢'
+        : guessed.year < targetOpera.year
+        ? '🔻'
+        : '🔺';
+
+    headerRow.after(row);
+  }
+  document.getElementById('stats-content')!.after(sharable);
+}
+
+async function copyShareTable(event: Event) {
+  // prevent the modal from closing
+  event.preventDefault();
+  const table = document.getElementById('history-table');
+  if (!table) {
+    return;
+  }
+
+  const html = new Blob([table!.outerHTML], {
+    type: 'text/html',
+  });
+  const imageBlob = await domtoimage.toBlob(table!);
+
+  navigator.clipboard.write([
+    new ClipboardItem({
+      ['text/html']: html,
+      [imageBlob.type]: imageBlob,
+    }),
+  ]);
+
+  const tableHeight = table.offsetHeight;
+
+  const p = document.createElement('p');
+  p.textContent = 'Copied to clipboard';
+  // make the p the same size as the table
+  p.style.height = `${tableHeight}px`;
+  table.after(p);
+  table.classList.add('hide');
+  setTimeout(() => {
+    p.remove();
+    table.classList.remove('hide');
+  }, 1500);
 }
 
 document.getElementById('stats-close-button')!.onclick = hideStats;
 document.getElementById('modal-overlay')!.onclick = hideStats;
 document.getElementById('show-stats-button')!.onclick = showStats;
+document.getElementById('share-stats-button')!.onclick = copyShareTable;
 
-function hideStats() {
+function hideStats(event: Event) {
+  if (event.defaultPrevented) return;
   document.getElementById('modal-overlay')!.classList.add('hide');
   document.getElementById('stats-modal')!.classList.add('hide');
 }
@@ -392,6 +444,3 @@ function getSpan(literals: TemplateStringsArray, ...values: string[]) {
   }
   return span;
 }
-
-// focus the input element
-inputEl.focus();

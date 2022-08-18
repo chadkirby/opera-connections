@@ -40,21 +40,15 @@ body {
 #app {
     display: grid;
     grid-template-columns: minmax(auto, 35rem);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
-      "top"
       "hintcontrols"
       "guesses";
-    row-gap: 1rem;
     margin: 0rem 1rem;
 }
 
-#top-area {
-  grid-area: top;
-  text-align: center;
-}
-#top-area h1 {
-  font-size: 1.5rem;
+h1 {
+  font-size: x-large;
 }
 
 #feedback-area {
@@ -135,6 +129,10 @@ body {
   width: 100%;
   border-top: 1px solid #ccc;
   padding-top: 1rem;
+}
+
+div.hint{
+  background-color: aliceblue;
 }
 
 #input-row, #hint-row {
@@ -246,6 +244,7 @@ p, h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.2);
   max-width: 30rem;
   z-index: 1001;
+  padding: 1em 0em;
 }
 
 #stats-content {
@@ -254,6 +253,13 @@ p, h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   margin: 1rem;
+}
+
+#share-stats-button {
+  margin-top: 1rem;
+  display: flex;
+  column-gap: 0.5em;
+  align-items: center;
 }
 
 .stat {
