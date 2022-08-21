@@ -90,6 +90,10 @@ const feedbackSlot = document.querySelector(
   'slot[name="feedback-slot"]'
 ) as HTMLSlotElement;
 
+const modalOverlay = document.getElementById(
+  'modal-overlay'
+)! as HTMLDivElement;
+
 const history: { guess?: string; hint?: true }[] = [];
 
 hintButton.onclick = () => {
@@ -266,7 +270,7 @@ interface LocalGame {
 
 async function showStats() {
   document.getElementById('history-table')?.remove();
-  document.getElementById('modal-overlay')!.classList.remove('hide');
+  modalOverlay.classList.remove('hide');
   document.getElementById('stats-modal')!.classList.remove('hide');
   const localStorageKeys = Object.keys(localStorage);
   const gameKeys = localStorageKeys.filter((key) => key.startsWith('play-'));
@@ -356,26 +360,25 @@ async function copyShareTable(event: Event) {
 
   const tableHeight = table.offsetHeight;
 
-  const p = document.createElement('p');
-  p.textContent = 'Copied to clipboard';
+  const p = document.getElementById('stats-message')!;
   // make the p the same size as the table
   p.style.height = `${tableHeight}px`;
-  table.after(p);
+  p.classList.remove('hide');
   table.classList.add('hide');
   setTimeout(() => {
-    p.remove();
+    p.classList.add('hide');
     table.classList.remove('hide');
   }, 1500);
 }
 
 document.getElementById('stats-close-button')!.onclick = hideStats;
-document.getElementById('modal-overlay')!.onclick = hideStats;
+modalOverlay.onclick = hideStats;
 document.getElementById('show-stats-button')!.onclick = showStats;
 document.getElementById('share-stats-button')!.onclick = copyShareTable;
 
 function hideStats(event: Event) {
   if (event.defaultPrevented) return;
-  document.getElementById('modal-overlay')!.classList.add('hide');
+  modalOverlay.classList.add('hide');
   document.getElementById('stats-modal')!.classList.add('hide');
 }
 
@@ -389,6 +392,12 @@ function disableGuessBtn() {
 inputEl.onkeydown = (e) => {
   if (e.key === 'Enter') {
     doGuess();
+  }
+};
+document.body.onkeydown = (e) => {
+  // close the modal if the user presses escape
+  if (e.key === 'Escape') {
+    hideStats(e);
   }
 };
 
