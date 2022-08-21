@@ -58,6 +58,10 @@ const myHandler: Handler = async (event) => {
     } as TargetOpera & {
       today: string;
     }),
+    headers: {
+      'Cache-Control': 'no-store, must-revalidate',
+      Vary: '*',
+    },
   };
 };
 
