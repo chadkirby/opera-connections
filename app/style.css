@@ -36,6 +36,11 @@ body {
 .flex-gap {
   row-gap: 1rem;
 }
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 
 #app {
     display: grid;
@@ -77,29 +82,36 @@ h1 {
 
 .feedback-table {
   border-spacing: 2rem 0rem;
+  width: 100%;
 }
 
-.feedback-table td {
+.feedback-table-row > div, .feedback-table-header > div {
   text-align: center;
+  width: 20ch;
 }
 
-.feedback-table th {
+.feedback-table-header {
   font-weight: 100;
   font-size: small;
 }
 
-.feedback-table td.wrong-guess::before {
+.feedback-table-header, .feedback-table-row {
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.feedback-table .wrong-guess::before {
   content: '❌ ';
   font-size: small;
 }
-.feedback-table td.too-early::after {
+.feedback-table .too-early::after {
   content: ' (too early)';
 }
-.feedback-table td.too-late::after {
+.feedback-table .too-late::after {
   content: ' (too late)';
 }
 
-.feedback-table td.correct-guess::before {
+.feedback-table .correct-guess::before {
   content: '✔︎ ';
   font-size: larger;
   color: rgb(39, 163, 39);
@@ -313,4 +325,37 @@ p, h1, h2, h3, h4, h5, h6 {
 
 #show-stats-button {
   cursor: pointer;
+}
+
+.flip-container {
+	perspective: 1000px;
+}
+
+.flip-container.flip .flipper {
+	transform: rotateY(180deg);
+}
+
+/* flip speed goes here */
+.flipper {
+	transition: 0.6s;
+	transform-style: preserve-3d;
+  position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+	top: 0;
+}
+
+/* front pane, placed above back */
+.front {
+	z-index: 2;
+	/* for firefox 31 */
+	transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+	transform: rotateY(180deg);
 }

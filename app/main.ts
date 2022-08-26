@@ -157,38 +157,58 @@ async function doGuess() {
   const feedbackRow = feedbackTemplate.content.cloneNode(
     true
   ) as DocumentFragment;
+  const interval = 200;
 
   const p = feedbackRow.querySelector('p')!;
-  const composer = feedbackRow.querySelector('td.composer-feedback')!;
-  const date = feedbackRow.querySelector('td.date-feedback')!;
-  const language = feedbackRow.querySelector('td.language-feedback')!;
-  composer.textContent = guessedOpera.composer;
-  date.textContent = guessedOpera.year.toString();
-  language.textContent = guessedOpera.language;
+  const composer = feedbackRow.querySelector('.composer-feedback')!;
+  const date = feedbackRow.querySelector('.date-feedback')!;
+  const language = feedbackRow.querySelector('.language-feedback')!;
   if (guessedOpera.composerHref === targetOpera.composerHref) {
-    composer.classList.add('correct-guess');
     // remove all of the composer-category hints
     hints = hints.filter((h) => h.category !== 'composer');
     if (hints.length === 0) {
       hintButton.disabled = true;
     }
-  } else {
-    composer.classList.add('wrong-guess');
   }
-  if (guessedOpera.language === targetOpera.language) {
-    language.classList.add('correct-guess');
-  } else {
-    language.classList.add('wrong-guess');
-  }
-  if (guessedOpera.year === targetOpera.year) {
-    date.classList.add('correct-guess');
-  } else if (targetOpera.year < guessedOpera.year) {
-    date.classList.add('wrong-guess');
-    date.classList.add('too-late');
-  } else {
-    date.classList.add('wrong-guess');
-    date.classList.add('too-early');
-  }
+  // composer.querySelector('.front')!.textContent = guessedOpera.composer;
+  setTimeout(() => {
+    const back = composer.querySelector('.back')!;
+    back.textContent = guessedOpera.composer;
+    if (guessedOpera.composerHref === targetOpera.composerHref) {
+      back.classList.add('correct-guess');
+    } else {
+      back.classList.add('wrong-guess');
+    }
+    composer.closest('.flip-container')!.classList.toggle('flip');
+  }, interval);
+
+  // language.querySelector('.front')!.textContent = guessedOpera.language;
+  setTimeout(() => {
+    const back = language.querySelector('.back')!;
+    back.textContent = guessedOpera.language;
+    if (guessedOpera.language === targetOpera.language) {
+      back.classList.add('correct-guess');
+    } else {
+      back.classList.add('wrong-guess');
+    }
+    language.closest('.flip-container')!.classList.toggle('flip');
+  }, interval * 2);
+
+  // date.querySelector('.front')!.textContent = guessedOpera.year.toString();
+  setTimeout(() => {
+    const back = date.querySelector('.back')!;
+    back.textContent = guessedOpera.year.toString();
+    if (guessedOpera.year === targetOpera.year) {
+      back.classList.add('correct-guess');
+    } else if (targetOpera.year < guessedOpera.year) {
+      back.classList.add('wrong-guess');
+      back.classList.add('too-late');
+    } else {
+      back.classList.add('wrong-guess');
+      back.classList.add('too-early');
+    }
+    back.closest('.flip-container')!.classList.toggle('flip');
+  }, interval * 3);
 
   if (guessedOpera.titleHref === targetOpera.titleHref) {
     feedbackRow.querySelector('img.correct')!.classList.remove('hide');
@@ -198,7 +218,7 @@ async function doGuess() {
     p.appendChild(
       correct`${guessedOpera.titles[0]} is the opera you are looking for.`
     );
-    showStats();
+    setTimeout(showStats, interval * 4);
     inputEl.setAttribute('disabled', 'disabled');
   } else {
     feedbackRow.querySelector('img.incorrect')!.classList.remove('hide');

@@ -16,7 +16,7 @@
         <h1 id="welcome">Welcome to Operadle!</h1>
 
         <div class="flex flex-gap">
-          <p id="guess-prompt">Guess today's opera</p>
+          <p id="guess-prompt">Fetching today's opera…</p>
         </div>
 
         <div id="input-row" >
@@ -101,18 +101,33 @@
         </div>
         <div class="flex">
           <p></p>
-          <table class="feedback-table">
-            <tr>
-              <th>Composer</th>
-              <th>Language</th>
-              <th>Date</th>
-            </tr>
-            <tr>
-              <td class="composer-feedback"></td>
-              <td class="language-feedback"></td>
-              <td class="date-feedback"></td>
-            </tr>
-          </table>
+          <div class="feedback-table flex">
+            <div class="feedback-table-header flex-row">
+              <div>Composer</div>
+              <div>Language</div>
+              <div>Date</div>
+            </div>
+            <div class="feedback-table-row flex-row">
+              <div class="composer-feedback flip-container">
+                <div class="flipper">
+                  <div class="front"></div>
+                  <div class=" back"></div>
+                </div>
+              </div>
+              <div class="language-feedback flip-container">
+                <div class="flipper" >
+                  <div class="front"></div>
+                  <div class=" back"></div>
+                </div>
+              </div>
+              <div class="date-feedback flip-container">
+                <div class="flipper" >
+                  <div class="front"></div>
+                  <div class=" back"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           </div>
       </div>
     </template>
