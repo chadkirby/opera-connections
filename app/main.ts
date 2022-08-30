@@ -218,7 +218,7 @@ async function doGuess() {
     p.appendChild(
       correct`${guessedOpera.titles[0]} is the opera you are looking for.`
     );
-    setTimeout(showStats, interval * 4);
+    setTimeout(showStats, interval * 6);
     inputEl.setAttribute('disabled', 'disabled');
   } else {
     feedbackRow.querySelector('img.incorrect')!.classList.remove('hide');
