@@ -47,7 +47,7 @@
     "@ckirby/block-re": "^3.0.1",
     "@ckirby/dom-dom-dom-dommmm": "^8.2.0",
     "@ckirby/mr-lister": "^3.1.0",
-    "@ckirby/opera-info": "^1.1.0",
+    "@ckirby/opera-info": "^2.0.0",
     "@ckirby/sbd": "^2.1.0",
     "@netlify/functions": "^1.0.0",
     "autocompleter": "^6.1.3",

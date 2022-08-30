@@ -27,5 +27,12 @@ export async function getOperaList() {
     'Ullmann',
   ];
 
-  return new Operas(skipComposers);
+  return new Operas(
+    (o) =>
+      !skipComposers.includes(o.composer) &&
+      // Verdi's Otello is much more prominent, and we can't currently
+      // deal with two operas having the same name, so kill the Rossini
+      // version
+      o.titleHref !== '/wiki/Otello_(Rossini)'
+  );
 }
