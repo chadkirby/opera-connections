@@ -366,14 +366,14 @@ async function copyShareTable(event: Event) {
     return;
   }
 
-  const html = new Blob([table!.outerHTML], {
-    type: 'text/html',
-  });
+  // const html = new Blob([table!.outerHTML], {
+  //   type: 'text/html',
+  // });
   const imageBlob = await domtoimage.toBlob(table!);
 
   navigator.clipboard.write([
     new ClipboardItem({
-      ['text/html']: html,
+      // ['text/html']: html,
       [imageBlob.type]: imageBlob,
     }),
   ]);
