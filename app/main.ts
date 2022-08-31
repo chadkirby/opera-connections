@@ -25,7 +25,7 @@ if (window.location.href.endsWith('random')) {
   // the URL, so add a dummy query param
   // set today to midnight of the current day (west-coast time)
 
-  operaUrl += `?today=${today.toMillis()}`;
+  operaUrl += `?today=${today.toISO()}`;
 }
 const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {

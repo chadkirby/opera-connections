@@ -8,6 +8,7 @@ import { TargetOpera } from '@ckirby/opera-info';
 const myHandler: Handler = async (event) => {
   const operas = await getOperaList();
   const params = new URLSearchParams(event.rawQuery);
+  const todayISO = params.get('today') || DateTime.local().toISO();
 
   // using luxon, set the origin to midnight July 30, 2022 PDT
   const origin = DateTime.fromObject(
@@ -24,15 +25,8 @@ const myHandler: Handler = async (event) => {
     }
   );
   // set today to midnight of the current day PDT
-  const today = DateTime.fromObject(
-    {
-      hour: 0,
-      minute: 0,
-      second: 0,
-    },
-    {
-      zone: 'America/Los_Angeles',
-    }
+  const today = DateTime.fromISO(todayISO, { zone: 'America/Los_Angeles' }).set(
+    { hour: 0, minute: 0, second: 0 }
   );
   const daysSinceOrigin = Interval.fromDateTimes(origin, today).count('days');
   console.error({
