@@ -358,7 +358,7 @@ async function showStats() {
   document.getElementById('stats-content')!.after(sharable);
 }
 
-async function copyShareTable(event: Event) {
+function copyShareTable(event: Event) {
   // prevent the modal from closing
   event.preventDefault();
   const table = document.getElementById('history-table');
@@ -366,29 +366,37 @@ async function copyShareTable(event: Event) {
     return;
   }
 
-  // const html = new Blob([table!.outerHTML], {
-  //   type: 'text/html',
-  // });
-  const imageBlob = await domtoimage.toBlob(table!);
-
-  navigator.clipboard.write([
-    new ClipboardItem({
-      // ['text/html']: html,
-      [imageBlob.type]: imageBlob,
-    }),
-  ]);
-
-  const tableHeight = table.offsetHeight;
-
-  const p = document.getElementById('stats-message')!;
+  const success = document.getElementById('stats-success-message')!;
+  const fail = document.getElementById('stats-failure-message')!;
   // make the p the same size as the table
-  p.style.height = `${tableHeight}px`;
-  p.classList.remove('hide');
-  table.classList.add('hide');
-  setTimeout(() => {
-    p.classList.add('hide');
-    table.classList.remove('hide');
-  }, 1500);
+  const tableHeight = table.offsetHeight;
+  success.style.height = `${tableHeight}px`;
+  fail.style.height = `${tableHeight}px`;
+
+  navigator.clipboard
+    .write([
+      new ClipboardItem({
+        ['image/png']: domtoimage.toBlob(table!),
+      }),
+    ])
+    .then(
+      () => {
+        table.classList.add('hide');
+        success.classList.remove('hide');
+        setTimeout(() => {
+          success.classList.add('hide');
+          table.classList.remove('hide');
+        }, 1500);
+      },
+      () => {
+        table.classList.add('hide');
+        fail.classList.remove('hide');
+        setTimeout(() => {
+          fail.classList.add('hide');
+          table.classList.remove('hide');
+        }, 1500);
+      }
+    );
 }
 
 document.getElementById('stats-close-button')!.onclick = hideStats;
