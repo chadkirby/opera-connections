@@ -99,9 +99,9 @@
     "@ckirby/block-re" "3.0.1"
 
 "@ckirby/opera-info@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@ckirby/opera-info/-/opera-info-2.0.0.tgz#607c6a68b2aa31dfe15c42d35f5e2ff659facd1f"
-  integrity sha512-jiOk7b9u+XJM+sLs7StYZT02bxb7P7asNA/LhRSLx+Ks17Qmc7aKhrUBQgiIeZEzRlNQKL338eGgI5mXc2SbrA==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@ckirby/opera-info/-/opera-info-2.0.1.tgz#8b88b100f7b4d2d45281c3d740f070989d999149"
+  integrity sha512-so/8zmRsJ09uW/BMHmlomp5n7r3/T64DIWgGVj5h9K6UKw9CqZ6i28B5IU/oGLjvoS8x/ZEoL/dYseTzsInD8A==
   dependencies:
     "@ckirby/block-re" "^3.0.1"
     "@ckirby/dom-dom-dom-dommmm" "^8.2.0"
