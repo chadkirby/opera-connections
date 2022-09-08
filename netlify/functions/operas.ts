@@ -10,6 +10,9 @@ const myHandler: Handler = async () => {
   return {
     statusCode: 200,
     body: JSON.stringify(operaList),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   };
 };
 

@@ -53,6 +53,7 @@ const myHandler: Handler = async (event) => {
       today: string;
     }),
     headers: {
+      'Content-Type': 'application/json',
       'Cache-Control': 'no-store, must-revalidate',
       Vary: '*',
     },
