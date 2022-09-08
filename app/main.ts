@@ -124,6 +124,11 @@ hintButton.onclick = () => {
 };
 
 giveupButton.onclick = () => {
+  modalOverlay.classList.remove('hide');
+  document.getElementById('confirmation-modal')!.classList.remove('hide');
+};
+
+document.getElementById('confirm-giveup-button')!.onclick = (event) => {
   const feedbackRow = feedbackTemplate.content.cloneNode(
     true
   ) as DocumentFragment;
@@ -135,11 +140,13 @@ giveupButton.onclick = () => {
       targetOpera.composer
     } that premiered in ${targetOpera.year.toString()}.`
   );
+  feedbackRow.querySelector('.feedback-table')?.remove();
   insertAndScroll(feedbackRow);
   disableGuessBtn();
   hintButton.setAttribute('disabled', 'disabled');
   giveupButton.setAttribute('disabled', 'disabled');
   inputEl.setAttribute('disabled', 'disabled');
+  hideModal(event);
 };
 
 function insertAndScroll(newRow: DocumentFragment | Element) {
@@ -399,15 +406,18 @@ function copyShareTable(event: Event) {
     );
 }
 
-document.getElementById('stats-close-button')!.onclick = hideStats;
-modalOverlay.onclick = hideStats;
+document.getElementById('stats-close-button')!.onclick = hideModal;
+document.getElementById('cancel-giveup-button')!.onclick = hideModal;
+modalOverlay.onclick = hideModal;
 document.getElementById('show-stats-button')!.onclick = showStats;
 document.getElementById('share-stats-button')!.onclick = copyShareTable;
 
-function hideStats(event: Event) {
+function hideModal(event: Event) {
   if (event.defaultPrevented) return;
   modalOverlay.classList.add('hide');
-  document.getElementById('stats-modal')!.classList.add('hide');
+  for (const child of Array.from(modalOverlay.children)) {
+    child.classList.add('hide');
+  }
 }
 
 function disableGuessBtn() {
@@ -425,7 +435,7 @@ inputEl.onkeydown = (e) => {
 document.body.onkeydown = (e) => {
   // close the modal if the user presses escape
   if (e.key === 'Escape') {
-    hideStats(e);
+    hideModal(e);
   }
 };
 

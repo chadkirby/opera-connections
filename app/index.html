@@ -40,7 +40,17 @@
     </div>
 
     <div id="modal-overlay" class="hide" role="button">
-      <div id="stats-modal">
+      <div id="confirmation-modal" class="hide modal">
+        <div class="flex-row flex-gap">
+          <div class="warning">⚠️</div>
+          <h3>Are you sure you want to give up?</h3>
+        </div>
+        <div class="flex-row flex-gap">
+          <button id="confirm-giveup-button">I give up!</button>
+          <button id="cancel-giveup-button">I want to keep guessing</button>
+        </div>
+      </div>
+      <div id="stats-modal" class="hide modal">
         <h2>Statistics</h2>
         <div id="stats-content">
           <div class="stat">
