@@ -116,7 +116,7 @@ hintButton.onclick = () => {
   const hintRow = hintTemplate.content.cloneNode(true) as DocumentFragment;
   hintRow.querySelector('.feedback-row')?.classList.add('hint');
   const p = hintRow.querySelector('p')!;
-  p.textContent = hints.shift()!.hint;
+  p.innerHTML = hints.shift()!.hint;
   insertAndScroll(hintRow);
   if (hints.length === 0) {
     hintButton.disabled = true;

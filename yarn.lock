@@ -98,10 +98,10 @@
   dependencies:
     "@ckirby/block-re" "3.0.1"
 
-"@ckirby/opera-info@^2.0.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@ckirby/opera-info/-/opera-info-2.1.0.tgz#666d1080ef959f53421d85c0b03ba96ad80d7d3a"
-  integrity sha512-IzTxYIoI+NZIfRDXrdJYTZ8jmHq6hgI1Y/9gDhsGbFWGrwGiHUi2ZlFNocZDP1Aa8RtRGcg5ngcmqw6xSgk7Zw==
+"@ckirby/opera-info@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@ckirby/opera-info/-/opera-info-3.0.0.tgz#271a8f3cfdd750a3019becfb423e6264af7d2811"
+  integrity sha512-hXyiLtYOrygiKvu1zTb41pHhHsMMcaVhovs9Dkt75LPuX4iPM84acGu7AVQzmUxzJHRHCN76O1hGVzEKEHPDXg==
   dependencies:
     "@ckirby/block-re" "^3.0.1"
     "@ckirby/dom-dom-dom-dommmm" "^8.2.0"
@@ -3583,10 +3583,10 @@ fast-safe-stringify@^2.0.7:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fastest-levenshtein@1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/fastest-levenshtein/-/fastest-levenshtein-1.0.13.tgz#4adeb1ec5b70c1aebfc8448821863b1ef3148130"
-  integrity sha512-ojjkFNxaL1Zg07zV4tp4IjqJZ/Qp66F7SFNqCDNMlQacJWJgPdEYKecCkWZrzoB3bGWX5ZU2V7Gxc8sDuvTOTQ==
+fastest-levenshtein@1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/fastest-levenshtein/-/fastest-levenshtein-1.0.16.tgz#210e61b6ff181de91ea9b3d1b84fdedd47e034e5"
+  integrity sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==
 
 fastq@^1.6.0:
   version "1.13.0"
