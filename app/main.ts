@@ -416,7 +416,9 @@ function hideModal(event: Event) {
   if (event.defaultPrevented) return;
   modalOverlay.classList.add('hide');
   for (const child of Array.from(modalOverlay.children)) {
-    child.classList.add('hide');
+    if (child.id.endsWith('-modal')) {
+      child.classList.add('hide');
+    }
   }
 }
 
