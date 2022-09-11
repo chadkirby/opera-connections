@@ -34,7 +34,7 @@ if (params.get('href') !== null) {
 const response = await fetch(operaUrl);
 const targetOpera = (await response.json()) as TargetOpera & { today?: string };
 if (targetOpera.today) {
-  guessPrompt.textContent = `Guess today's opera (🎯) by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
+  guessPrompt.textContent = `Guess today's opera by typing a few letters of a title & pressing 𝚁𝚎𝚝𝚞𝚛𝚗.`;
   document.getElementById(
     'welcome'
   )!.textContent = `Operadle for ${DateTime.fromISO(
