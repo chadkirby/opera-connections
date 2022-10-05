@@ -3,6 +3,8 @@ import { DateTime } from 'luxon';
 import Fuse from 'fuse.js';
 import domtoimage from 'dom-to-image';
 import type { ListedOpera, TargetOpera } from '@ckirby/opera-info';
+const params = new URLSearchParams(window.location.search);
+const iso = params.get('date'); // is the string "Jonathan"
 
 const today = DateTime.fromObject(
   {
@@ -15,6 +17,8 @@ const today = DateTime.fromObject(
   }
 );
 
+const theDay = iso ? DateTime.min(DateTime.fromISO(iso), today) : today;
+
 let operaUrl = '/.netlify/functions/today';
 const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
@@ -25,9 +29,8 @@ if (window.location.href.endsWith('random')) {
   // the URL, so add a dummy query param
   // set today to midnight of the current day (west-coast time)
 
-  operaUrl += `?today=${today.toISO()}`;
+  operaUrl += `?today=${theDay.toISO()}`;
 }
-const params = new URLSearchParams(window.location.search);
 if (params.get('href') !== null) {
   operaUrl = `/.netlify/functions/wiki?${params}`;
 }
@@ -41,6 +44,22 @@ if (targetOpera.today) {
     targetOpera.today
   ).toLocaleString(DateTime.DATE_MED)}`;
 }
+
+const prevDay = document.getElementById('prev-day')!.querySelector('a')!;
+const nextDay = document.getElementById('next-day')!.querySelector('a')!;
+const tomorrow = theDay.plus({ days: 1 });
+// set the title of the nextDay link
+if (tomorrow.toMillis() > today.toMillis()) {
+  nextDay.classList.add('hide');
+} else {
+  nextDay.classList.remove('hide');
+  nextDay.href = `?date=${theDay.plus({ days: 1 }).toISO()}`;
+  nextDay.title = `Operadle for ${tomorrow.toLocaleString(DateTime.DATE_MED)}`;
+}
+
+const yesterday = theDay.minus({ days: 1 });
+prevDay.href = `?date=${yesterday.toISO()}`;
+prevDay.title = `Operadle for ${yesterday.toLocaleString(DateTime.DATE_MED)}`;
 
 const operas = await fetch('/.netlify/functions/operas');
 const operaList = (await operas.json()) as ListedOpera[];
@@ -99,7 +118,7 @@ const history: { guess?: string; hint?: true }[] = [];
 hintButton.onclick = () => {
   history.unshift({ hint: true });
   localStorage.setItem(
-    `play-${today.toISO()}`,
+    `play-${theDay.toISO()}`,
     JSON.stringify({
       target: targetOpera.titleHref,
       history,
@@ -243,7 +262,7 @@ async function doGuess() {
   disableGuessBtn();
 
   localStorage.setItem(
-    `play-${today.toISO()}`,
+    `play-${theDay.toISO()}`,
     JSON.stringify({
       target: targetOpera.titleHref,
       history,

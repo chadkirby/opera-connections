@@ -53,6 +53,20 @@ body {
     margin: 0rem 1rem;
 }
 
+#top-welcome {
+  width: 100%;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#prev-day a, #next-day a {
+  text-decoration: none;
+  font-size: x-large;
+  font-family: system-ui;
+}
+
 h1 {
   font-size: x-large;
 }
