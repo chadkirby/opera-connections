@@ -1,6 +1,6 @@
-import { builder, Handler } from '@netlify/functions';
+import { Handler } from '@netlify/functions';
 
-const myHandler: Handler = async (event) => {
+const handler: Handler = async (event) => {
   const { URLSearchParams } = await import('url');
   const fetch = await import('node-fetch');
   const params = new URLSearchParams(event.rawQuery);
@@ -29,7 +29,5 @@ const myHandler: Handler = async (event) => {
     body: JSON.stringify({ message: 'No url provided' }),
   };
 };
-
-const handler = builder(myHandler);
 
 export { handler };

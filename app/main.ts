@@ -19,7 +19,7 @@ const today = DateTime.fromObject(
 
 const theDay = iso ? DateTime.min(DateTime.fromISO(iso), today) : today;
 
-let operaUrl = '/.netlify/functions/today';
+let operaUrl = '/api/today';
 const guessPrompt = document.getElementById('guess-prompt')!;
 if (window.location.href.endsWith('random')) {
   operaUrl += '?random=true';
@@ -30,9 +30,6 @@ if (window.location.href.endsWith('random')) {
   // set today to midnight of the current day (west-coast time)
 
   operaUrl += `?today=${theDay.toISO()}`;
-}
-if (params.get('href') !== null) {
-  operaUrl = `/.netlify/functions/wiki?${params}`;
 }
 const response = await fetch(operaUrl);
 const targetOpera = (await response.json()) as TargetOpera & { today?: string };
@@ -61,7 +58,7 @@ const yesterday = theDay.minus({ days: 1 });
 prevDay.href = `?date=${yesterday.toISO()}`;
 prevDay.title = `Operadle for ${yesterday.toLocaleString(DateTime.DATE_MED)}`;
 
-const operas = await fetch('/.netlify/functions/operas');
+const operas = await fetch('/api/operas');
 const operaList = (await operas.json()) as ListedOpera[];
 
 const fuse = new Fuse(
@@ -84,9 +81,7 @@ const composerPicFragment = (document.getElementById(
   'composer-template'
 ) as HTMLTemplateElement)!.content.cloneNode(true) as DocumentFragment;
 const img = document.createElement('img');
-img.src = `/.netlify/functions/image?url=${encodeURIComponent(
-  targetOpera.thumbnailUrl
-)}`;
+img.src = `/api/image?url=${encodeURIComponent(targetOpera.thumbnailUrl)}`;
 const composerPic = composerPicFragment.getElementById('composer-picture')!;
 composerPic?.appendChild(img);
 

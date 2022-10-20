@@ -1,11 +1,11 @@
-import { builder, Handler } from '@netlify/functions';
+import { Handler } from '@netlify/functions';
 import seedrandom from 'seedrandom';
 import { DateTime, Interval } from 'luxon';
 
 import { getOperaList } from '../../utils/opera-list.js';
 import { TargetOpera } from '@ckirby/opera-info';
 
-const myHandler: Handler = async (event) => {
+const handler: Handler = async (event) => {
   const operas = await getOperaList();
   const params = new URLSearchParams(event.rawQuery);
   const todayISO = params.get('today') || DateTime.local().toISO();
@@ -84,7 +84,5 @@ const myHandler: Handler = async (event) => {
     };
   }
 };
-
-const handler = builder(myHandler);
 
 export { handler };
