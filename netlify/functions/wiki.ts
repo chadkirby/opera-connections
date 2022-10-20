@@ -1,7 +1,7 @@
-import { builder, Handler } from '@netlify/functions';
+import { Handler } from '@netlify/functions';
 import { getOperaList } from '../../utils/opera-list.js';
 
-const myHandler: Handler = async (event) => {
+const handler: Handler = async (event) => {
   const params = new URLSearchParams(event.rawQuery);
   console.error(event);
 
@@ -22,7 +22,5 @@ const myHandler: Handler = async (event) => {
     body: JSON.stringify(targetOpera),
   };
 };
-
-const handler = builder(myHandler);
 
 export { handler };
